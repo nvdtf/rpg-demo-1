@@ -1,8 +1,5 @@
 # Senate governance configuration (design-v1 §6). Managed by `senate member`.
 members:
-    carol:
-        weight: 20
-        proxy_profile: profiles/carol.md
     nvdtf:
         weight: 30
         github: nvdtf
