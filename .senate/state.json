@@ -1,9 +1,19 @@
 {
-  "phase": "IDLE",
+  "phase": "IDEA",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
   "speckit_version": "v0.10.1",
+  "idea": "build a web based rpg game",
+  "idea_issue": 1,
   "delta_loops": 0,
-  "sessions": 3
+  "sessions": 3,
+  "history": [
+    {
+      "from": "IDLE",
+      "to": "IDEA",
+      "at": "2026-06-15T19:56:03.985358Z",
+      "note": "idea issue #1"
+    }
+  ]
 }
