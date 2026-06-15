@@ -523,13 +523,14 @@
     "T004": {
       "id": "T004",
       "issue": 10,
+      "pr": 12,
       "branch": "task/T004",
       "status": "in_review",
       "review_cycles": 0,
       "worker_runs": 1
     }
   },
-  "sessions": 20,
+  "sessions": 21,
   "history": [
     {
       "from": "IDLE",

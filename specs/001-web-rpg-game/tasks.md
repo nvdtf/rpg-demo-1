@@ -23,7 +23,7 @@
 - [x] T001 Create project directory structure: `css/`, `js/scenes/`, `js/entities/`, `js/systems/`, `js/data/`, `js/utils/`, `assets/sprites/`, `assets/tiles/`, `assets/maps/`, `assets/ui/`
 - [x] T002 Create `index.html` loading Phaser 3 arcade-physics build from jsDelivr CDN (`phaser@3.87.0/dist/phaser-arcade-physics.min.js`) and `js/main.js` as ES module
 - [x] T003 [P] Create `css/style.css` with minimal page and canvas styling (centered canvas, black background, no scroll)
-- [ ] T004 [P] Create `js/main.js` with Phaser game config (Arcade Physics, canvas dimensions, scene registration array for all scenes, pixelArt rendering mode)
+- [x] T004 [P] Create `js/main.js` with Phaser game config (Arcade Physics, canvas dimensions, scene registration array for all scenes, pixelArt rendering mode)
 
 ---
 
