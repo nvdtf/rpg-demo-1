@@ -542,7 +542,7 @@
       "issue": 14,
       "pr": 15,
       "branch": "task/T006",
-      "status": "in_review",
+      "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
     }
