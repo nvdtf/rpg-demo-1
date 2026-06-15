@@ -1,5 +1,5 @@
 {
-  "phase": "SPEC_PATCHED",
+  "phase": "RATIFIED",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -492,17 +492,7 @@
     ]
   },
   "delta_loops": 0,
-  "sessions": 8,
-  "pending": {
-    "step": "ratify",
-    "issue": 2,
-    "awaiting": [
-      "nvdtf",
-      "tehranifar"
-    ],
-    "action": "approve or reject ratification (`/approve \u003cowner\u003e` or `/reject \u003cowner\u003e \u003creason\u003e`)",
-    "since": "2026-06-15T21:48:14.959873Z"
-  },
+  "sessions": 10,
   "history": [
     {
       "from": "IDLE",
@@ -527,6 +517,12 @@
       "to": "SPEC_PATCHED",
       "at": "2026-06-15T21:48:14.377063Z",
       "note": "4 clarifications, 4 requirements, deferred: D3,D4,D7,D8"
+    },
+    {
+      "from": "SPEC_PATCHED",
+      "to": "RATIFIED",
+      "at": "2026-06-15T22:42:36.609251Z",
+      "note": "PR #2 labeled ratified"
     }
   ]
 }
