@@ -1,5 +1,5 @@
 {
-  "phase": "PLANNED",
+  "phase": "BUILDING",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -529,6 +529,18 @@
       "to": "PLANNED",
       "at": "2026-06-15T22:56:43.611448Z",
       "note": "plan + tasks generated"
+    },
+    {
+      "from": "PLANNED",
+      "to": "ANALYZED",
+      "at": "2026-06-15T22:59:45.203048Z",
+      "note": "analyze passed"
+    },
+    {
+      "from": "ANALYZED",
+      "to": "BUILDING",
+      "at": "2026-06-15T23:00:02.072934Z",
+      "note": "dispatch started"
     }
   ]
 }
