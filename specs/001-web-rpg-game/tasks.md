@@ -36,7 +36,7 @@
 - [x] T005 [P] Create placeholder pixel-art tileset image at `assets/tiles/tileset.png` (16x16 tile grid with grass, path, water, wall, tree tile types) and player spritesheet at `assets/sprites/player.png` (16x16 frames, 4-direction walk cycle, 3 frames per direction)
 - [x] T006 [P] Create `js/utils/helpers.js` with shared utilities (direction vectors, clamp function, tile-to-pixel and pixel-to-tile coordinate conversion)
 - [x] T007 Create `js/scenes/BootScene.js` with Phaser preload for initial assets: tileset image, player spritesheet, and world map JSON — register player walk animations for all four directions
-- [ ] T008 Create `js/scenes/MenuScene.js` with main menu screen: "New Game" button (starts WorldScene), "Load Game" button (initially disabled/greyed), and "Controls" help overlay showing keybindings from contracts/game-state.md input table
+- [x] T008 Create `js/scenes/MenuScene.js` with main menu screen: "New Game" button (starts WorldScene), "Load Game" button (initially disabled/greyed), and "Controls" help overlay showing keybindings from contracts/game-state.md input table
 
 **Checkpoint**: Foundation ready — user story implementation can begin
 

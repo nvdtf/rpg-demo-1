@@ -554,9 +554,18 @@
       "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
+    },
+    "T008": {
+      "id": "T008",
+      "issue": 18,
+      "pr": 19,
+      "branch": "task/T008",
+      "status": "in_review",
+      "review_cycles": 0,
+      "worker_runs": 1
     }
   },
-  "sessions": 26,
+  "sessions": 28,
   "history": [
     {
       "from": "IDLE",
