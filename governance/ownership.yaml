@@ -12,6 +12,9 @@ members:
     nvdtf:
         weight: 30
         github: nvdtf
+    tehranifar:
+        weight: 30
+        github: tehranifar
 rules:
     spec_merge_threshold: 60
     constitution_threshold: 80
