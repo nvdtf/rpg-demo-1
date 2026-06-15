@@ -1,5 +1,5 @@
 {
-  "phase": "INTERROGATED",
+  "phase": "VOTED",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -184,17 +184,209 @@
       "defer_to_probe": true
     }
   ],
+  "dim_tallies": [
+    {
+      "dimension": "D1",
+      "title": "Rendering Engine / Framework",
+      "stakes": "HIGH",
+      "winner": "a",
+      "winner_label": "Phaser 3 (full game framework)",
+      "weighted_pct": 70,
+      "status": "decided",
+      "by_choice": {
+        "a": 70,
+        "b": 30
+      },
+      "votes": {
+        "nvdtf": "a",
+        "questmaster": "a",
+        "scopekeeper": "a",
+        "tehranifar": "b"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "human"
+      }
+    },
+    {
+      "dimension": "D2",
+      "title": "Combat Scene Presentation",
+      "stakes": "MED",
+      "winner": "a",
+      "winner_label": "Separate full-screen side-view scene (FF/DQ style)",
+      "weighted_pct": 100,
+      "status": "decided",
+      "by_choice": {
+        "a": 100
+      },
+      "votes": {
+        "nvdtf": "a",
+        "questmaster": "a",
+        "scopekeeper": "a",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "recommendation"
+      }
+    },
+    {
+      "dimension": "D3",
+      "title": "Ability Unlock on Level-Up",
+      "stakes": "HIGH",
+      "winner": "a",
+      "winner_label": "Stats only — fixed 3 actions (Attack/Defend/Use Item)",
+      "weighted_pct": 50,
+      "status": "conflict",
+      "by_choice": {
+        "a": 50,
+        "b": 30,
+        "c": 20
+      },
+      "votes": {
+        "nvdtf": "b",
+        "questmaster": "c",
+        "scopekeeper": "a",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "human"
+      }
+    },
+    {
+      "dimension": "D4",
+      "title": "World Map Size",
+      "stakes": "MED",
+      "winner": "a",
+      "winner_label": "Small (~50x50 tiles, tight and focused)",
+      "weighted_pct": 50,
+      "status": "conflict",
+      "by_choice": {
+        "a": 50,
+        "b": 20,
+        "c": 30
+      },
+      "votes": {
+        "nvdtf": "c",
+        "questmaster": "b",
+        "scopekeeper": "a",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "human"
+      }
+    },
+    {
+      "dimension": "D5",
+      "title": "Enemy Encounter Model",
+      "stakes": "MED",
+      "winner": "a",
+      "winner_label": "Visible enemy sprites on map (Chrono Trigger style)",
+      "weighted_pct": 80,
+      "status": "decided",
+      "by_choice": {
+        "a": 80,
+        "b": 20
+      },
+      "votes": {
+        "nvdtf": "a",
+        "questmaster": "a",
+        "scopekeeper": "b",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "recommendation"
+      }
+    },
+    {
+      "dimension": "D6",
+      "title": "Deployment Target",
+      "stakes": "MED",
+      "winner": "a",
+      "winner_label": "GitHub Pages (static, auto-deploy from repo)",
+      "weighted_pct": 100,
+      "status": "decided",
+      "by_choice": {
+        "a": 100
+      },
+      "votes": {
+        "nvdtf": "a",
+        "questmaster": "a",
+        "scopekeeper": "a",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "recommendation"
+      }
+    },
+    {
+      "dimension": "D7",
+      "title": "Visual Style \u0026 Pixel Density",
+      "stakes": "LOW",
+      "winner": "b",
+      "winner_label": "16x16 tiles, SNES-era full color (nostalgic)",
+      "weighted_pct": 100,
+      "status": "deferred",
+      "by_choice": {
+        "b": 100
+      },
+      "votes": {
+        "nvdtf": "b",
+        "questmaster": "b",
+        "scopekeeper": "b",
+        "tehranifar": "b"
+      },
+      "sources": {
+        "nvdtf": "recommendation",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "recommendation"
+      }
+    },
+    {
+      "dimension": "D8",
+      "title": "HUD Density During Exploration",
+      "stakes": "LOW",
+      "winner": "b",
+      "winner_label": "Light — small health bar in corner only",
+      "weighted_pct": 80,
+      "status": "deferred",
+      "by_choice": {
+        "b": 80,
+        "c": 20
+      },
+      "votes": {
+        "nvdtf": "b",
+        "questmaster": "c",
+        "scopekeeper": "b",
+        "tehranifar": "b"
+      },
+      "sources": {
+        "nvdtf": "recommendation",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "recommendation"
+      }
+    }
+  ],
   "delta_loops": 0,
-  "sessions": 5,
-  "pending": {
-    "step": "tally",
-    "issue": 3,
-    "awaiting": [
-      "tehranifar"
-    ],
-    "action": "vote on the HIGH-stakes dimensions (`/vote \u003cowner\u003e D1=a …`)",
-    "since": "2026-06-15T20:00:39.809567Z"
-  },
+  "sessions": 7,
   "history": [
     {
       "from": "IDLE",
@@ -207,6 +399,12 @@
       "to": "INTERROGATED",
       "at": "2026-06-15T19:59:53.377159Z",
       "note": "questionnaire #3 (8 dims), feature PR #2"
+    },
+    {
+      "from": "INTERROGATED",
+      "to": "VOTED",
+      "at": "2026-06-15T21:47:13.188016Z",
+      "note": "8 dims tallied, deferred: D3,D4,D7,D8"
     }
   ]
 }
