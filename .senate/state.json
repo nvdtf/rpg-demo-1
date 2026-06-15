@@ -1,5 +1,5 @@
 {
-  "phase": "RATIFIED",
+  "phase": "PLANNED",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -523,6 +523,12 @@
       "to": "RATIFIED",
       "at": "2026-06-15T22:42:36.609251Z",
       "note": "PR #2 labeled ratified"
+    },
+    {
+      "from": "RATIFIED",
+      "to": "PLANNED",
+      "at": "2026-06-15T22:56:43.611448Z",
+      "note": "plan + tasks generated"
     }
   ]
 }
