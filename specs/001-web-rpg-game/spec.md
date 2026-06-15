@@ -172,3 +172,26 @@ The player can save their current game progress and load it in a future session.
 - The game targets modern evergreen browsers (Chrome, Firefox, Safari, Edge) and does not need to support legacy browsers.
 - There is one save slot per browser; multiple save slots are out of scope for this version.
 - The combat system uses a simple stat-based formula (damage = attacker's attack minus defender's defense, with a minimum of 1). No elemental types or complex ability trees are included in this version.
+
+## Clarifications
+
+- **Rendering Engine / Framework** → Phaser 3 (full game framework) (70% weighted, D1)
+- **Combat Scene Presentation** → Separate full-screen side-view scene (FF/DQ style) (100% weighted, D2)
+- **Enemy Encounter Model** → Visible enemy sprites on map (Chrono Trigger style) (80% weighted, D5)
+- **Deployment Target** → GitHub Pages (static, auto-deploy from repo) (100% weighted, D6)
+
+## Requirements
+
+- FR-016: The game MUST be built using the Phaser 3 framework as the rendering engine, physics provider, and game-loop manager. — *provenance: decided: 70% weighted (D1)*
+- FR-017: Combat encounters MUST be presented in a separate full-screen side-view scene (Final Fantasy / Dragon Quest style), visually distinct from the exploration map, with a transition effect between scenes. — *provenance: decided: 100% weighted (D2)*
+- FR-018: Enemies MUST appear as visible sprites on the exploration map (Chrono Trigger style); combat is initiated when the player character makes contact with an enemy sprite. There are no random/invisible encounters. — *provenance: decided: 80% weighted (D5)*
+- FR-019: The game MUST be deployable as a static site to GitHub Pages with automated deployment configured from the repository (no server-side runtime required). — *provenance: decided: 100% weighted (D6)*
+
+## Deferred to Probe
+
+These dimensions are **intentionally deferred**: the group reacts to the deployed probe instead of predicting from text.
+
+- D3 — Ability Unlock on Level-Up (a: Stats only — fixed 3 actions (Attack/Defend/Use Item) · b: Unlock 1–2 extra combat abilities via leveling · c: Skill tree with 4+ unlockable abilities)
+- D4 — World Map Size (a: Small (~50x50 tiles, tight and focused) · b: Medium (~75x75 tiles, village + wilderness + dungeon) · c: Large (~100x100 tiles, expansive))
+- D7 — Visual Style & Pixel Density (a: 16x16 tiles, Game Boy palette (ultra-retro) · b: 16x16 tiles, SNES-era full color (nostalgic) · c: 32x32 tiles, modern indie pixel art (higher fidelity))
+- D8 — HUD Density During Exploration (a: Minimal — no persistent HUD, stats via menu only · b: Light — small health bar in corner only · c: Full — health bar, minimap, quest tracker, hotkey hints)
