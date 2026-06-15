@@ -12,6 +12,9 @@ members:
     nvdtf:
         weight: 30
         github: nvdtf
+    questmaster:
+        weight: 20
+        proxy_profile: profiles/questmaster.md
     tehranifar:
         weight: 30
         github: tehranifar
