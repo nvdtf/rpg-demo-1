@@ -15,6 +15,9 @@ members:
     questmaster:
         weight: 20
         proxy_profile: profiles/questmaster.md
+    scopekeeper:
+        weight: 20
+        proxy_profile: profiles/scopekeeper.md
     tehranifar:
         weight: 30
         github: tehranifar
