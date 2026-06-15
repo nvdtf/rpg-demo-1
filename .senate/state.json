@@ -186,6 +186,15 @@
   ],
   "delta_loops": 0,
   "sessions": 5,
+  "pending": {
+    "step": "tally",
+    "issue": 3,
+    "awaiting": [
+      "tehranifar"
+    ],
+    "action": "vote on the HIGH-stakes dimensions (`/vote \u003cowner\u003e D1=a …`)",
+    "since": "2026-06-15T20:00:39.809567Z"
+  },
   "history": [
     {
       "from": "IDLE",
