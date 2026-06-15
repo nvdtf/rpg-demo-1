@@ -162,7 +162,7 @@
 
 - [ ] T045 [P] Add scene transition effects between WorldScene and CombatScene per FR-017: fade-out/fade-in or screen wipe using Phaser camera effects in `js/scenes/WorldScene.js` and `js/scenes/CombatScene.js`
 - [ ] T046 [P] Polish player walking animations in `js/scenes/WorldScene.js`: ensure smooth tile-to-tile tweened movement, correct directional sprite facing, idle frame on stop
-- [ ] T047 Implement edge cases per spec: map boundary prevention (player cannot move beyond map edges), full inventory notification (reject item with message when at 20 items), rapid input debounce (one movement per keypress, discard queued inputs), mid-combat close recovery (load returns to last save point, not mid-combat)
+- [ ] T047 Implement edge cases per spec: map boundary prevention (player cannot move beyond map edges), full inventory notification (reject item with message when at 20 items), rapid input debounce (one movement per keypress, discard queued inputs), mid-combat close recovery (load returns to last save point, not mid-combat) in `js/scenes/WorldScene.js`, `js/systems/InventorySystem.js`, and `js/systems/SaveSystem.js`
 - [ ] T048 Run `specs/001-web-rpg-game/quickstart.md` validation scenarios 1–9 end-to-end in browser and fix any failures
 
 ---
