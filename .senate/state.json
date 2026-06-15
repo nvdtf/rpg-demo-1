@@ -1,0 +1,9 @@
+{
+  "phase": "IDLE",
+  "backend": "real",
+  "repo_name": "rpg-demo-1",
+  "repo_slug": "nvdtf/rpg-demo-1",
+  "speckit_version": "v0.10.1",
+  "delta_loops": 0,
+  "sessions": 1
+}

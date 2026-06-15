@@ -1,0 +1,12 @@
+# Senate governance configuration (design-v1 §6).
+members:
+  alice: { weight: 50, proxy_profile: profiles/alice.md }
+  bob: { weight: 30, proxy_profile: profiles/bob.md }
+  carol: { weight: 20, proxy_profile: profiles/carol.md }
+rules:
+  spec_merge_threshold: 60
+  constitution_threshold: 80
+  min_distinct_approvers: 2
+  vote_window_hours: 0
+  silence_resolution: proxy_then_recommendation
+  probe_revision_cap: 2
