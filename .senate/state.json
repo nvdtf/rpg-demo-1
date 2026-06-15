@@ -1,5 +1,5 @@
 {
-  "phase": "VOTED",
+  "phase": "SPEC_PATCHED",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -385,6 +385,112 @@
       }
     }
   ],
+  "aggregate": {
+    "results": [
+      {
+        "dimension": "D1",
+        "winner": "a",
+        "weighted_pct": 70,
+        "status": "decided"
+      },
+      {
+        "dimension": "D2",
+        "winner": "a",
+        "weighted_pct": 100,
+        "status": "decided"
+      },
+      {
+        "dimension": "D3",
+        "winner": "a",
+        "weighted_pct": 50,
+        "status": "conflict"
+      },
+      {
+        "dimension": "D4",
+        "winner": "a",
+        "weighted_pct": 50,
+        "status": "conflict"
+      },
+      {
+        "dimension": "D5",
+        "winner": "a",
+        "weighted_pct": 80,
+        "status": "decided"
+      },
+      {
+        "dimension": "D6",
+        "winner": "a",
+        "weighted_pct": 100,
+        "status": "decided"
+      },
+      {
+        "dimension": "D7",
+        "winner": "b",
+        "weighted_pct": 100,
+        "status": "deferred"
+      },
+      {
+        "dimension": "D8",
+        "winner": "b",
+        "weighted_pct": 80,
+        "status": "deferred"
+      }
+    ],
+    "clarifications": [
+      {
+        "question": "Rendering Engine / Framework",
+        "answer": "Phaser 3 (full game framework)",
+        "weighted_pct": 70,
+        "provenance": "D1"
+      },
+      {
+        "question": "Combat Scene Presentation",
+        "answer": "Separate full-screen side-view scene (FF/DQ style)",
+        "weighted_pct": 100,
+        "provenance": "D2"
+      },
+      {
+        "question": "Enemy Encounter Model",
+        "answer": "Visible enemy sprites on map (Chrono Trigger style)",
+        "weighted_pct": 80,
+        "provenance": "D5"
+      },
+      {
+        "question": "Deployment Target",
+        "answer": "GitHub Pages (static, auto-deploy from repo)",
+        "weighted_pct": 100,
+        "provenance": "D6"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "FR-016",
+        "text": "The game MUST be built using the Phaser 3 framework as the rendering engine, physics provider, and game-loop manager.",
+        "provenance": "decided: 70% weighted (D1)"
+      },
+      {
+        "id": "FR-017",
+        "text": "Combat encounters MUST be presented in a separate full-screen side-view scene (Final Fantasy / Dragon Quest style), visually distinct from the exploration map, with a transition effect between scenes.",
+        "provenance": "decided: 100% weighted (D2)"
+      },
+      {
+        "id": "FR-018",
+        "text": "Enemies MUST appear as visible sprites on the exploration map (Chrono Trigger style); combat is initiated when the player character makes contact with an enemy sprite. There are no random/invisible encounters.",
+        "provenance": "decided: 80% weighted (D5)"
+      },
+      {
+        "id": "FR-019",
+        "text": "The game MUST be deployable as a static site to GitHub Pages with automated deployment configured from the repository (no server-side runtime required).",
+        "provenance": "decided: 100% weighted (D6)"
+      }
+    ],
+    "deferred": [
+      "D3",
+      "D4",
+      "D7",
+      "D8"
+    ]
+  },
   "delta_loops": 0,
   "sessions": 8,
   "history": [
@@ -405,6 +511,12 @@
       "to": "VOTED",
       "at": "2026-06-15T21:47:13.188016Z",
       "note": "8 dims tallied, deferred: D3,D4,D7,D8"
+    },
+    {
+      "from": "VOTED",
+      "to": "SPEC_PATCHED",
+      "at": "2026-06-15T21:48:14.377063Z",
+      "note": "4 clarifications, 4 requirements, deferred: D3,D4,D7,D8"
     }
   ]
 }
