@@ -33,7 +33,7 @@
 
 **⚠️ CRITICAL**: No user story work can begin until this phase is complete
 
-- [ ] T005 [P] Create placeholder pixel-art tileset image at `assets/tiles/tileset.png` (16x16 tile grid with grass, path, water, wall, tree tile types) and player spritesheet at `assets/sprites/player.png` (16x16 frames, 4-direction walk cycle, 3 frames per direction)
+- [x] T005 [P] Create placeholder pixel-art tileset image at `assets/tiles/tileset.png` (16x16 tile grid with grass, path, water, wall, tree tile types) and player spritesheet at `assets/sprites/player.png` (16x16 frames, 4-direction walk cycle, 3 frames per direction)
 - [ ] T006 [P] Create `js/utils/helpers.js` with shared utilities (direction vectors, clamp function, tile-to-pixel and pixel-to-tile coordinate conversion)
 - [ ] T007 Create `js/scenes/BootScene.js` with Phaser preload for initial assets: tileset image, player spritesheet, and world map JSON — register player walk animations for all four directions
 - [ ] T008 Create `js/scenes/MenuScene.js` with main menu screen: "New Game" button (starts WorldScene), "Load Game" button (initially disabled/greyed), and "Controls" help overlay showing keybindings from contracts/game-state.md input table
@@ -71,7 +71,7 @@
 
 - [ ] T015 [P] [US2] Create `js/data/enemies.js` exporting enemy stat tables (Slime, Goblin, Wolf, Skeleton) with fields per data-model.md: id, name, hp, maxHp, attack, defense, xpReward, lootTable, spriteKey
 - [ ] T016 [P] [US2] Create `js/data/items.js` exporting item catalog: weapons (Wooden Sword, Iron Sword, Steel Blade), armor (Leather Tunic, Chain Mail), and consumables (Health Potion, Greater Health Potion) with fields per data-model.md
-- [ ] T017 [P] [US2] Create placeholder enemy sprites in `assets/sprites/` (slime.png, goblin.png, wolf.png, skeleton.png) as spritesheets with idle and attack frames
+- [x] T017 [P] [US2] Create placeholder enemy sprites in `assets/sprites/` (slime.png, goblin.png, wolf.png, skeleton.png) as spritesheets with idle and attack frames
 - [ ] T018 [US2] Create `js/entities/Enemy.js` as a class wrapping a Phaser Arcade sprite: placed at tile coordinates from enemy data, overlap detection with Player, `defeated` flag to hide after combat victory
 - [ ] T019 [US2] Add enemy spawning to `js/scenes/WorldScene.js`: instantiate Enemy entities from `enemies.js` data at map positions, register `physics.add.overlap` with Player to trigger combat transition
 - [ ] T020 [US2] Create `js/systems/CombatSystem.js` with 5-state FSM (PLAYER_TURN, PLAYER_ANIMATING, ENEMY_TURN, ENEMY_ANIMATING, COMBAT_END): damage formula `max(1, attacker.attack - defender.defense)`, defend action doubles effective defense, use-item action for consumables
@@ -109,7 +109,7 @@
 
 - [ ] T027 [P] [US4] Create `js/data/npcs.js` exporting NPC definitions per data-model.md: id, name, dialog lines, questId, spriteKey, x/y tile position — at least 3 NPCs (village elder, merchant, quest giver)
 - [ ] T028 [P] [US4] Create `js/data/quests.js` exporting quest definitions per data-model.md: id, title, description, objectiveType (defeat/find_item/talk_to_npc), targetId, targetCount, rewardXp, rewardGold, rewardItemId — at least 2 quests
-- [ ] T029 [P] [US4] Create NPC placeholder sprites in `assets/sprites/` (elder.png, merchant.png, questgiver.png) as spritesheets with idle frames
+- [x] T029 [P] [US4] Create NPC placeholder sprites in `assets/sprites/` (elder.png, merchant.png, questgiver.png) as spritesheets with idle frames
 - [ ] T030 [US4] Create `js/entities/NPC.js` as a class wrapping a Phaser Arcade sprite: placed at tile coordinates from NPC data, interaction trigger zone, `interact()` method to start dialog sequence
 - [ ] T031 [US4] Create `js/systems/QuestSystem.js`: accept quest (add QuestEntry to player), update progress on relevant events (enemy defeated, item found, NPC talked to), detect completion, distribute rewards (XP, gold, item via InventorySystem or direct), query active/completed quests
 - [ ] T032 [US4] Add dialog box UI to `js/scenes/UIScene.js`: semi-transparent text box at bottom of screen, sequential dialog line display with Enter/Space to advance, quest accept/decline prompt at end of quest-giving dialog
