@@ -1,19 +1,203 @@
 {
-  "phase": "IDEA",
+  "phase": "INTERROGATED",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
   "speckit_version": "v0.10.1",
   "idea": "build a web based rpg game",
   "idea_issue": 1,
+  "feature_branch": "001-web-rpg-game",
+  "feature_dir": "specs/001-web-rpg-game",
+  "feature_pr": 2,
+  "questionnaire_issue": 3,
+  "dimensions": [
+    {
+      "id": "D1",
+      "title": "Rendering Engine / Framework",
+      "stakes": "HIGH",
+      "options": [
+        {
+          "key": "a",
+          "label": "Phaser 3 (full game framework)"
+        },
+        {
+          "key": "b",
+          "label": "Raw HTML5 Canvas (manual engine)"
+        },
+        {
+          "key": "c",
+          "label": "DOM + CSS Grid (no canvas)"
+        }
+      ],
+      "recommendation": "a",
+      "cost_note": "Option c severely limits animation and camera; option b is ~3x implementation effort vs option a",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D2",
+      "title": "Combat Scene Presentation",
+      "stakes": "MED",
+      "options": [
+        {
+          "key": "a",
+          "label": "Separate full-screen side-view scene (FF/DQ style)"
+        },
+        {
+          "key": "b",
+          "label": "Overlay panel on exploration map (in-place combat)"
+        },
+        {
+          "key": "c",
+          "label": "First-person enemy view (player not visible)"
+        }
+      ],
+      "recommendation": "a",
+      "cost_note": "",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D3",
+      "title": "Ability Unlock on Level-Up",
+      "stakes": "HIGH",
+      "options": [
+        {
+          "key": "a",
+          "label": "Stats only — fixed 3 actions (Attack/Defend/Use Item)"
+        },
+        {
+          "key": "b",
+          "label": "Unlock 1–2 extra combat abilities via leveling"
+        },
+        {
+          "key": "c",
+          "label": "Skill tree with 4+ unlockable abilities"
+        }
+      ],
+      "recommendation": "a",
+      "cost_note": "Option c is ~5x the combat UI and balancing scope of option a",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D4",
+      "title": "World Map Size",
+      "stakes": "MED",
+      "options": [
+        {
+          "key": "a",
+          "label": "Small (~50x50 tiles, tight and focused)"
+        },
+        {
+          "key": "b",
+          "label": "Medium (~75x75 tiles, village + wilderness + dungeon)"
+        },
+        {
+          "key": "c",
+          "label": "Large (~100x100 tiles, expansive)"
+        }
+      ],
+      "recommendation": "b",
+      "cost_note": "Option c without proportional content investment produces a barren world",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D5",
+      "title": "Enemy Encounter Model",
+      "stakes": "MED",
+      "options": [
+        {
+          "key": "a",
+          "label": "Visible enemy sprites on map (Chrono Trigger style)"
+        },
+        {
+          "key": "b",
+          "label": "Random encounters on certain tiles (early FF style)"
+        }
+      ],
+      "recommendation": "a",
+      "cost_note": "Option a requires enemy patrol AI and per-enemy overworld sprites",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D6",
+      "title": "Deployment Target",
+      "stakes": "MED",
+      "options": [
+        {
+          "key": "a",
+          "label": "GitHub Pages (static, auto-deploy from repo)"
+        },
+        {
+          "key": "b",
+          "label": "Single index.html bundle (open from filesystem)"
+        },
+        {
+          "key": "c",
+          "label": "Server-hosted (Vite/Express static)"
+        }
+      ],
+      "recommendation": "a",
+      "cost_note": "Option b may hit CORS issues loading assets from file://",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D7",
+      "title": "Visual Style \u0026 Pixel Density",
+      "stakes": "LOW",
+      "options": [
+        {
+          "key": "a",
+          "label": "16x16 tiles, Game Boy palette (ultra-retro)"
+        },
+        {
+          "key": "b",
+          "label": "16x16 tiles, SNES-era full color (nostalgic)"
+        },
+        {
+          "key": "c",
+          "label": "32x32 tiles, modern indie pixel art (higher fidelity)"
+        }
+      ],
+      "recommendation": "b",
+      "cost_note": "",
+      "defer_to_probe": true
+    },
+    {
+      "id": "D8",
+      "title": "HUD Density During Exploration",
+      "stakes": "LOW",
+      "options": [
+        {
+          "key": "a",
+          "label": "Minimal — no persistent HUD, stats via menu only"
+        },
+        {
+          "key": "b",
+          "label": "Light — small health bar in corner only"
+        },
+        {
+          "key": "c",
+          "label": "Full — health bar, minimap, quest tracker, hotkey hints"
+        }
+      ],
+      "recommendation": "b",
+      "cost_note": "",
+      "defer_to_probe": true
+    }
+  ],
   "delta_loops": 0,
-  "sessions": 4,
+  "sessions": 5,
   "history": [
     {
       "from": "IDLE",
       "to": "IDEA",
       "at": "2026-06-15T19:56:03.985358Z",
       "note": "idea issue #1"
+    },
+    {
+      "from": "IDEA",
+      "to": "INTERROGATED",
+      "at": "2026-06-15T19:59:53.377159Z",
+      "note": "questionnaire #3 (8 dims), feature PR #2"
     }
   ]
 }
