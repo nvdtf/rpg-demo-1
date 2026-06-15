@@ -1,8 +1,5 @@
 # Senate governance configuration (design-v1 §6). Managed by `senate member`.
 members:
-    bob:
-        weight: 30
-        proxy_profile: profiles/bob.md
     carol:
         weight: 20
         proxy_profile: profiles/carol.md
