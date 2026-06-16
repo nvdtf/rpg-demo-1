@@ -146,7 +146,7 @@
 
 ### Implementation for User Story 6
 
-- [ ] T040 [US6] Create `js/systems/SaveSystem.js`: `save()` serializes full state (version, timestamp, player, questLog, defeatedEnemies) per contracts/game-state.md schema → `localStorage.setItem('rpg_save_v1', JSON.stringify(data))`; `load()` reads and parses with version check; `hasSave()` checks for existing save
+- [x] T040 [US6] Create `js/systems/SaveSystem.js`: `save()` serializes full state (version, timestamp, player, questLog, defeatedEnemies) per contracts/game-state.md schema → `localStorage.setItem('rpg_save_v1', JSON.stringify(data))`; `load()` reads and parses with version check; `hasSave()` checks for existing save
 - [ ] T041 [US6] Add pause menu overlay to `js/scenes/WorldScene.js` triggered by Escape key: "Save Game", "Load Game", "Resume" buttons — pause game loop while menu is open
 - [ ] T042 [US6] Implement save flow: "Save Game" button → gather Player state + InventorySystem contents + QuestSystem log + defeated enemy IDs → `SaveSystem.save()` → display confirmation text
 - [ ] T043 [US6] Implement load flow: MenuScene "Load Game" → `SaveSystem.load()` → start WorldScene with `{ mode: "load_game", saveData }` → restore player position, stats, inventory, equipment, quest progress, and mark defeated enemies as hidden

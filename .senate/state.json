@@ -823,9 +823,18 @@
       "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
+    },
+    "T040": {
+      "id": "T040",
+      "issue": 77,
+      "pr": 78,
+      "branch": "task/T040",
+      "status": "in_review",
+      "review_cycles": 0,
+      "worker_runs": 1
     }
   },
-  "sessions": 87,
+  "sessions": 89,
   "history": [
     {
       "from": "IDLE",
