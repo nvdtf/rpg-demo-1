@@ -179,6 +179,10 @@ The player can save their current game progress and load it in a future session.
 - **Combat Scene Presentation** → Separate full-screen side-view scene (FF/DQ style) (100% weighted, D2)
 - **Enemy Encounter Model** → Visible enemy sprites on map (Chrono Trigger style) (80% weighted, D5)
 - **Deployment Target** → GitHub Pages (static, auto-deploy from repo) (100% weighted, D6)
+- **Ability Unlock on Level-Up** → Stats only — fixed 3 actions (Attack/Defend/Use Item) (70% weighted) (70% weighted, D3)
+- **World Map Size** → Small (~50x50 tiles, tight and focused) (70% weighted) (70% weighted, D4)
+- **HUD Density During Exploration** → Light — small health bar in corner only (70% weighted) (70% weighted, D8)
+
 
 ## Requirements
 
@@ -186,6 +190,10 @@ The player can save their current game progress and load it in a future session.
 - FR-017: Combat encounters MUST be presented in a separate full-screen side-view scene (Final Fantasy / Dragon Quest style), visually distinct from the exploration map, with a transition effect between scenes. — *provenance: decided: 100% weighted (D2)*
 - FR-018: Enemies MUST appear as visible sprites on the exploration map (Chrono Trigger style); combat is initiated when the player character makes contact with an enemy sprite. There are no random/invisible encounters. — *provenance: decided: 80% weighted (D5)*
 - FR-019: The game MUST be deployable as a static site to GitHub Pages with automated deployment configured from the repository (no server-side runtime required). — *provenance: decided: 100% weighted (D6)*
+- R100: Level-ups MUST increase stats only (health, attack, defense); the combat system MUST provide exactly three fixed actions — Attack, Defend, and Use Item — with no additional abilities unlocked through leveling. — *provenance: probe: 70% weighted (D3)*
+- R101: The game world MUST use a small map of approximately 50×50 tiles, tightly focused with minimal empty space. — *provenance: probe: 70% weighted (D4)*
+- R102: During exploration, the HUD MUST display only a small health bar in one corner of the screen; all other player information (stats, inventory, quests) MUST be accessible only through menu screens. — *provenance: probe: 70% weighted (D8)*
+
 
 ## Deferred to Probe
 
