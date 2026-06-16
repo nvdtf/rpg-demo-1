@@ -176,7 +176,7 @@
 
 **Purpose**: Validate and enforce the three newly decided requirements from probe feedback. These were deferred dimensions now resolved by stakeholder vote.
 
-- [ ] T049 [P] Validate and enforce R100 in `js/systems/LevelSystem.js` — ensure `addXp()` and level-up logic only increase hp, attack, and defense stats with no ability unlock mechanism; remove any ability-related code paths if present
+- [x] T049 [P] Validate and enforce R100 in `js/systems/LevelSystem.js` — ensure `addXp()` and level-up logic only increase hp, attack, and defense stats with no ability unlock mechanism; remove any ability-related code paths if present
 - [ ] T050 [P] Validate and enforce R100 in `js/scenes/CombatScene.js` — ensure exactly 3 fixed actions (Attack, Defend, Use Item) are hardcoded in the action menu with no level-gated, conditional, or dynamically unlocked combat abilities
 - [ ] T051 Validate and enforce R101 in `assets/maps/world.json` — confirm map dimensions are approximately 50×50 tiles with a tightly focused layout and minimal empty space; if map has excessive filler areas or wrong dimensions, redesign the tile layout to be compact
 - [ ] T052 Validate and enforce R102 in `js/scenes/UIScene.js` — ensure the exploration HUD displays only a small health bar in one corner of the screen; remove any persistent quest tracker, minimap, or hotkey hints from the exploration overlay; confirm stats, inventory, and quests are accessible only through menu screens (C, I, Q keys)
