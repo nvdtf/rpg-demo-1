@@ -988,7 +988,7 @@
       "issue": 97,
       "pr": 99,
       "branch": "task/T050",
-      "status": "in_review",
+      "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
     }
