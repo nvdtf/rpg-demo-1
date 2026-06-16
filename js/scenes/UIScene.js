@@ -15,7 +15,15 @@ export class UIScene extends Phaser.Scene {
     }
 
     create() {
-        // Health-bar geometry (top-left corner).
+        // ── R102 Enforcement ─────────────────────────────────────────
+        // During exploration the HUD MUST display ONLY a small health
+        // bar in one corner.  All other player info (stats, inventory,
+        // quests) MUST be accessible only via menu screens (C / I / Q).
+        // Do NOT add persistent UI elements (minimap, quest tracker,
+        // hotkey hints, etc.) to this scene outside of menu overlays.
+        // ─────────────────────────────────────────────────────────────
+
+        // Health-bar geometry (top-left corner) — sole persistent HUD element.
         this.barX = 10;
         this.barY = 10;
         this.barWidth = 160;
