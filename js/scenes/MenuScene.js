@@ -26,7 +26,7 @@ export class MenuScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Check for existing save
-        const hasSave = localStorage.getItem('rpg_save_v1') !== null;
+        const hasSave = SaveSystem.hasSave();
 
         // New Game button
         this._createButton(centerX, 260, 'New Game', true, () => {
