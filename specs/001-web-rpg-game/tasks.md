@@ -70,7 +70,7 @@
 ### Implementation for User Story 2
 
 - [x] T015 [P] [US2] Create `js/data/enemies.js` exporting enemy stat tables (Slime, Goblin, Wolf, Skeleton) with fields per data-model.md: id, name, hp, maxHp, attack, defense, xpReward, lootTable, spriteKey
-- [ ] T016 [P] [US2] Create `js/data/items.js` exporting item catalog: weapons (Wooden Sword, Iron Sword, Steel Blade), armor (Leather Tunic, Chain Mail), and consumables (Health Potion, Greater Health Potion) with fields per data-model.md
+- [x] T016 [P] [US2] Create `js/data/items.js` exporting item catalog: weapons (Wooden Sword, Iron Sword, Steel Blade), armor (Leather Tunic, Chain Mail), and consumables (Health Potion, Greater Health Potion) with fields per data-model.md
 - [x] T017 [P] [US2] Create placeholder enemy sprites in `assets/sprites/` (slime.png, goblin.png, wolf.png, skeleton.png) as spritesheets with idle and attack frames
 - [ ] T018 [US2] Create `js/entities/Enemy.js` as a class wrapping a Phaser Arcade sprite: placed at tile coordinates from enemy data, overlap detection with Player, `defeated` flag to hide after combat victory
 - [ ] T019 [US2] Add enemy spawning to `js/scenes/WorldScene.js`: instantiate Enemy entities from `enemies.js` data at map positions, register `physics.add.overlap` with Player to trigger combat transition
