@@ -72,7 +72,14 @@ export default class Player {
         if (this.isMoving) return;
 
         const input = this._readDirection();
-        if (!input) return;
+        if (!input) {
+            // No input — ensure idle frame is shown for the current facing.
+            if (this.sprite.anims.isPlaying) {
+                this.sprite.anims.stop();
+                this.sprite.setFrame(this._idleFrame());
+            }
+            return;
+        }
 
         const { dir, anim, facing } = input;
         this.facing = facing;
@@ -80,9 +87,20 @@ export default class Player {
         const targetX = this.tileX + dir.x;
         const targetY = this.tileY + dir.y;
 
-        if (this._isTileBlocked(targetX, targetY)) return;
+        if (this._isTileBlocked(targetX, targetY)) {
+            // Can't move but face the attempted direction.
+            this.sprite.anims.stop();
+            this.sprite.setFrame(this._idleFrame());
+            return;
+        }
 
         this._tweenTo(targetX, targetY, anim);
+    }
+
+    /** Force the sprite into the idle frame for the current facing direction. */
+    setIdle() {
+        this.sprite.anims.stop();
+        this.sprite.setFrame(this._idleFrame());
     }
 
     /* ── movement helpers ──────────────────────────────────────────── */
@@ -116,7 +134,7 @@ export default class Player {
             x,
             y,
             duration: 150,
-            ease: 'Linear',
+            ease: 'Sine.Out',
             onComplete: () => {
                 this.isMoving = false;
                 if (!this._isAnyDirectionHeld()) {
