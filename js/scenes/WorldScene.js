@@ -457,7 +457,7 @@ export class WorldScene extends Phaser.Scene {
         const hasSave = SaveSystem.hasSave();
         this._addPauseButton(0, -30, 'Resume', true, () => this._closePauseMenu());
         this._addPauseButton(0, 20, 'Save Game', true, () => this._onPauseSave());
-        this._addPauseButton(0, 70, 'Load Game', hasSave, () => this._onPauseLoad());
+        this._loadBtn = this._addPauseButton(0, 70, 'Load Game', hasSave, () => this._onPauseLoad());
 
         // Hint.
         const hint = this.add.text(0, panelH / 2 - 20, 'Esc to resume', {
@@ -471,6 +471,8 @@ export class WorldScene extends Phaser.Scene {
             this._pauseContainer.destroy();
             this._pauseContainer = null;
         }
+        this._pauseSaveText = null;
+        this._loadBtn = null;
         this._pauseMenuActive = false;
         this.physics.resume();
     }
@@ -495,6 +497,8 @@ export class WorldScene extends Phaser.Scene {
             btnBg.on('pointerout', () => btnBg.setFillStyle(0x334455));
             btnBg.on('pointerdown', callback);
         }
+
+        return { bg: btnBg, text };
     }
 
     _onPauseSave() {
@@ -510,6 +514,18 @@ export class WorldScene extends Phaser.Scene {
             stroke: '#000000', strokeThickness: 2,
         }).setOrigin(0.5);
         this._pauseContainer.add(this._pauseSaveText);
+
+        // Enable the Load Game button now that a save exists.
+        if (result.success && this._loadBtn && !this._loadBtn.bg.input) {
+            const btn = this._loadBtn;
+            btn.bg.setFillStyle(0x334455);
+            btn.bg.setStrokeStyle(2, 0x5588aa);
+            btn.text.setColor('#ffffff');
+            btn.bg.setInteractive({ useHandCursor: true });
+            btn.bg.on('pointerover', () => btn.bg.setFillStyle(0x446688));
+            btn.bg.on('pointerout', () => btn.bg.setFillStyle(0x334455));
+            btn.bg.on('pointerdown', () => this._onPauseLoad());
+        }
     }
 
     _onPauseLoad() {
