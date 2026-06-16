@@ -15,6 +15,11 @@ export class BootScene extends Phaser.Scene {
             frameHeight: TILE_SIZE
         });
 
+        // NPC sprites (16×16 single-frame images)
+        this.load.image('npc_elder', 'assets/sprites/elder.png');
+        this.load.image('npc_merchant', 'assets/sprites/merchant.png');
+        this.load.image('npc_scout', 'assets/sprites/questgiver.png');
+
         // World tile map (Tiled JSON format, created by a separate task)
         this.load.tilemapTiledJSON('world', 'assets/maps/world.json');
     }
