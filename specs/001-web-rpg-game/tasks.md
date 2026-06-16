@@ -110,7 +110,7 @@
 - [x] T027 [P] [US4] Create `js/data/npcs.js` exporting NPC definitions per data-model.md: id, name, dialog lines, questId, spriteKey, x/y tile position — at least 3 NPCs (village elder, merchant, quest giver)
 - [x] T028 [P] [US4] Create `js/data/quests.js` exporting quest definitions per data-model.md: id, title, description, objectiveType (defeat/find_item/talk_to_npc), targetId, targetCount, rewardXp, rewardGold, rewardItemId — at least 2 quests
 - [x] T029 [P] [US4] Create NPC placeholder sprites in `assets/sprites/` (elder.png, merchant.png, questgiver.png) as spritesheets with idle frames
-- [ ] T030 [US4] Create `js/entities/NPC.js` as a class wrapping a Phaser Arcade sprite: placed at tile coordinates from NPC data, interaction trigger zone, `interact()` method to start dialog sequence
+- [x] T030 [US4] Create `js/entities/NPC.js` as a class wrapping a Phaser Arcade sprite: placed at tile coordinates from NPC data, interaction trigger zone, `interact()` method to start dialog sequence
 - [ ] T031 [US4] Create `js/systems/QuestSystem.js`: accept quest (add QuestEntry to player), update progress on relevant events (enemy defeated, item found, NPC talked to), detect completion, distribute rewards (XP, gold, item via InventorySystem or direct), query active/completed quests
 - [ ] T032 [US4] Add dialog box UI to `js/scenes/UIScene.js`: semi-transparent text box at bottom of screen, sequential dialog line display with Enter/Space to advance, quest accept/decline prompt at end of quest-giving dialog
 - [ ] T033 [US4] Add quest log overlay to `js/scenes/UIScene.js` toggled by Q key: list active and completed quests with name, description, objective progress (e.g., "2/3 Slimes defeated"), close on Q or Escape
