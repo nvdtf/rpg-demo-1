@@ -1,3 +1,5 @@
+import SaveSystem from '../systems/SaveSystem.js';
+
 export class GameOverScene extends Phaser.Scene {
     constructor() {
         super('GameOverScene');
@@ -20,7 +22,7 @@ export class GameOverScene extends Phaser.Scene {
         }).setOrigin(0.5);
 
         // Check for existing save
-        const hasSave = localStorage.getItem('rpg_save_v1') !== null;
+        const hasSave = SaveSystem.hasSave();
 
         // New Game button
         this._createButton(centerX, height * 0.55, 'New Game', true, () => {
@@ -29,7 +31,10 @@ export class GameOverScene extends Phaser.Scene {
 
         // Load Save button (disabled if no save)
         this._createButton(centerX, height * 0.55 + 60, 'Load Save', hasSave, () => {
-            this.scene.start('WorldScene', { mode: 'load_game' });
+            const { data } = SaveSystem.load();
+            if (data) {
+                this.scene.start('WorldScene', { mode: 'load_game', saveData: data });
+            }
         });
     }
 
