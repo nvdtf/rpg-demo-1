@@ -787,9 +787,18 @@
       "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
+    },
+    "T036": {
+      "id": "T036",
+      "issue": 69,
+      "pr": 70,
+      "branch": "task/T036",
+      "status": "in_review",
+      "review_cycles": 0,
+      "worker_runs": 1
     }
   },
-  "sessions": 79,
+  "sessions": 81,
   "history": [
     {
       "from": "IDLE",
