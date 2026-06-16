@@ -150,7 +150,7 @@
 - [x] T041 [US6] Add pause menu overlay to `js/scenes/WorldScene.js` triggered by Escape key: "Save Game", "Load Game", "Resume" buttons — pause game loop while menu is open
 - [x] T042 [US6] Implement save flow: "Save Game" button → gather Player state + InventorySystem contents + QuestSystem log + defeated enemy IDs → `SaveSystem.save()` → display confirmation text
 - [x] T043 [US6] Implement load flow: MenuScene "Load Game" → `SaveSystem.load()` → start WorldScene with `{ mode: "load_game", saveData }` → restore player position, stats, inventory, equipment, quest progress, and mark defeated enemies as hidden
-- [ ] T044 [US6] Enable "Load Game" button in `js/scenes/MenuScene.js` when `SaveSystem.hasSave()` returns true; add "Load Save" option in `js/scenes/GameOverScene.js` that loads last save via SaveSystem
+- [x] T044 [US6] Enable "Load Game" button in `js/scenes/MenuScene.js` when `SaveSystem.hasSave()` returns true; add "Load Save" option in `js/scenes/GameOverScene.js` that loads last save via SaveSystem
 
 **Checkpoint**: All 6 user stories complete — full RPG gameplay loop with persistence
 

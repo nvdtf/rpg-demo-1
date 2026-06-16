@@ -859,9 +859,18 @@
       "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
+    },
+    "T044": {
+      "id": "T044",
+      "issue": 85,
+      "pr": 86,
+      "branch": "task/T044",
+      "status": "in_review",
+      "review_cycles": 0,
+      "worker_runs": 1
     }
   },
-  "sessions": 95,
+  "sessions": 97,
   "history": [
     {
       "from": "IDLE",
