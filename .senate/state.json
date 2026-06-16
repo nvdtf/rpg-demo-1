@@ -991,9 +991,26 @@
       "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
+    },
+    "T051": {
+      "id": "T051",
+      "issue": 100,
+      "branch": "task/T051",
+      "status": "pending",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T052": {
+      "id": "T052",
+      "issue": 101,
+      "pr": 102,
+      "branch": "task/T052",
+      "status": "in_review",
+      "review_cycles": 0,
+      "worker_runs": 1
     }
   },
-  "sessions": 116,
+  "sessions": 119,
   "history": [
     {
       "from": "IDLE",
