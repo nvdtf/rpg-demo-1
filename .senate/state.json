@@ -1,5 +1,5 @@
 {
-  "phase": "FEEDBACK",
+  "phase": "DELTA",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -492,7 +492,7 @@
   },
   "feedback_issue": 95,
   "probe_url": "https://nvdtf.github.io/rpg-demo-1/",
-  "delta_loops": 0,
+  "delta_loops": 1,
   "delta_aggregate": {
     "results": [
       {
@@ -1042,6 +1042,12 @@
       "to": "FEEDBACK",
       "at": "2026-06-16T02:44:38.321288Z",
       "note": "round 1: 3 delta requirements"
+    },
+    {
+      "from": "FEEDBACK",
+      "to": "DELTA",
+      "at": "2026-06-16T02:45:55.923405Z",
+      "note": "delta loop 1/2"
     }
   ]
 }
