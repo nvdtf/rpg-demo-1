@@ -93,7 +93,7 @@
 
 - [x] T024 [US3] Create `js/systems/LevelSystem.js`: XP threshold formula `floor(100 * level^1.5)` per data-model.md, stat growth (~15–20% per level matching the progression table), `addXp(player, amount)` method that returns level-up info, `getStatsForLevel(level)` lookup
 - [x] T025 [US3] Integrate LevelSystem into combat victory flow in `js/scenes/WorldScene.js` wake handler: call `addXp()` with enemy's `xpReward`, display level-up notification text if level increased, apply new stats to Player entity
-- [ ] T026 [US3] Add character screen overlay to `js/scenes/UIScene.js` toggled by C key: display player name, level, HP/maxHP, attack, defense, XP progress bar toward next level, equipped weapon and armor names — close on C or Escape
+- [x] T026 [US3] Add character screen overlay to `js/scenes/UIScene.js` toggled by C key: display player name, level, HP/maxHP, attack, defense, XP progress bar toward next level, equipped weapon and armor names — close on C or Escape
 
 **Checkpoint**: User Stories 1–3 work — full explore → fight → level up loop
 
