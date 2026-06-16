@@ -901,7 +901,7 @@
       "issue": 93,
       "pr": 94,
       "branch": "task/T048",
-      "status": "in_review",
+      "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
     }
