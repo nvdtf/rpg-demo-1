@@ -8,6 +8,7 @@ import NPCS from '../data/npcs.js';
 import LevelSystem from '../systems/LevelSystem.js';
 import QuestSystem from '../systems/QuestSystem.js';
 import InventorySystem from '../systems/InventorySystem.js';
+import SaveSystem from '../systems/SaveSystem.js';
 import ITEMS from '../data/items.js';
 
 export class WorldScene extends Phaser.Scene {
@@ -20,6 +21,8 @@ export class WorldScene extends Phaser.Scene {
         this.inCombat = false;
         this._dialogActive = false;
         this._activeNPC = null;
+        this._pauseMenuActive = false;
+        this._pauseContainer = null;
 
         // Build the tile map from preloaded Tiled JSON.
         const map = this.make.tilemap({ key: MAP_CONFIG.key });
@@ -80,6 +83,10 @@ export class WorldScene extends Phaser.Scene {
         this.keyEnter.on('down', () => this._onInteractKey());
         this.keySpace.on('down', () => this._onInteractKey());
 
+        // Escape key toggles the pause menu.
+        this.keyEsc = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
+        this.keyEsc.on('down', () => this._onEscKey());
+
         // Listen for dialog events from UIScene.
         this.game.events.on('dialog-quest-resolved', this._onQuestResolved, this);
         this.game.events.on('dialog-closed', this._onDialogClosed, this);
@@ -98,7 +105,7 @@ export class WorldScene extends Phaser.Scene {
     }
 
     update() {
-        if (this._dialogActive) return;
+        if (this._dialogActive || this._pauseMenuActive) return;
         this.player.update();
     }
 
@@ -396,5 +403,122 @@ export class WorldScene extends Phaser.Scene {
 
             y -= 18;
         }
+    }
+
+    /* ── pause menu ───────────────────────────────────────────────── */
+
+    _onEscKey() {
+        if (this.inCombat || this._dialogActive) return;
+
+        // Let UIScene handle ESC when one of its overlays is open.
+        const uiScene = this.scene.get('UIScene');
+        if (uiScene && (uiScene.charScreenVisible || uiScene.questLogVisible || uiScene.inventoryVisible || uiScene.dialogActive)) {
+            return;
+        }
+
+        if (this._pauseMenuActive) {
+            this._closePauseMenu();
+        } else {
+            this._openPauseMenu();
+        }
+    }
+
+    _openPauseMenu() {
+        this._pauseMenuActive = true;
+        this.physics.pause();
+
+        const cam = this.cameras.main;
+        this._pauseContainer = this.add.container(cam.width / 2, cam.height / 2);
+        this._pauseContainer.setScrollFactor(0);
+        this._pauseContainer.setDepth(2000);
+
+        // Full-screen dim backdrop.
+        const dimBg = this.add.rectangle(0, 0, cam.width, cam.height, 0x000000, 0.6);
+        this._pauseContainer.add(dimBg);
+
+        // Panel.
+        const panelW = 260;
+        const panelH = 250;
+        const bg = this.add.graphics();
+        bg.fillStyle(0x111118, 0.95);
+        bg.fillRoundedRect(-panelW / 2, -panelH / 2, panelW, panelH, 6);
+        bg.lineStyle(2, 0x6666aa, 1);
+        bg.strokeRoundedRect(-panelW / 2, -panelH / 2, panelW, panelH, 6);
+        this._pauseContainer.add(bg);
+
+        // Title.
+        const title = this.add.text(0, -panelH / 2 + 20, 'PAUSED', {
+            fontSize: '20px', fontFamily: 'monospace', color: '#ffdd44',
+            stroke: '#000000', strokeThickness: 3,
+        }).setOrigin(0.5, 0);
+        this._pauseContainer.add(title);
+
+        // Buttons.
+        const hasSave = SaveSystem.hasSave();
+        this._addPauseButton(0, -30, 'Resume', true, () => this._closePauseMenu());
+        this._addPauseButton(0, 20, 'Save Game', true, () => this._onPauseSave());
+        this._addPauseButton(0, 70, 'Load Game', hasSave, () => this._onPauseLoad());
+
+        // Hint.
+        const hint = this.add.text(0, panelH / 2 - 20, 'Esc to resume', {
+            fontSize: '11px', fontFamily: 'monospace', color: '#666666',
+        }).setOrigin(0.5);
+        this._pauseContainer.add(hint);
+    }
+
+    _closePauseMenu() {
+        if (this._pauseContainer) {
+            this._pauseContainer.destroy();
+            this._pauseContainer = null;
+        }
+        this._pauseMenuActive = false;
+        this.physics.resume();
+    }
+
+    _addPauseButton(x, y, label, enabled, callback) {
+        const btnW = 180;
+        const btnH = 36;
+
+        const btnBg = this.add.rectangle(x, y, btnW, btnH, enabled ? 0x334455 : 0x222222)
+            .setStrokeStyle(2, enabled ? 0x5588aa : 0x444444);
+        this._pauseContainer.add(btnBg);
+
+        const text = this.add.text(x, y, label, {
+            fontSize: '16px', fontFamily: 'monospace',
+            color: enabled ? '#ffffff' : '#666666',
+        }).setOrigin(0.5);
+        this._pauseContainer.add(text);
+
+        if (enabled) {
+            btnBg.setInteractive({ useHandCursor: true });
+            btnBg.on('pointerover', () => btnBg.setFillStyle(0x446688));
+            btnBg.on('pointerout', () => btnBg.setFillStyle(0x334455));
+            btnBg.on('pointerdown', callback);
+        }
+    }
+
+    _onPauseSave() {
+        const defeatedIds = this.enemies.filter(e => e.defeated).map(e => e.id);
+        const result = SaveSystem.save(this.player, defeatedIds);
+
+        // Show brief feedback inside the pause panel.
+        if (this._pauseSaveText) this._pauseSaveText.destroy();
+        const msg = result.success ? 'Game Saved!' : 'Save Failed';
+        const color = result.success ? '#44ff44' : '#ff4444';
+        this._pauseSaveText = this.add.text(0, 105, msg, {
+            fontSize: '13px', fontFamily: 'monospace', color,
+            stroke: '#000000', strokeThickness: 2,
+        }).setOrigin(0.5);
+        this._pauseContainer.add(this._pauseSaveText);
+    }
+
+    _onPauseLoad() {
+        if (!SaveSystem.hasSave()) return;
+        this._closePauseMenu();
+        // Clean up global event listeners before restarting the scene.
+        this.game.events.off('dialog-quest-resolved', this._onQuestResolved, this);
+        this.game.events.off('dialog-closed', this._onDialogClosed, this);
+        this.scene.stop('UIScene');
+        this.scene.restart({ mode: 'load_game' });
     }
 }
