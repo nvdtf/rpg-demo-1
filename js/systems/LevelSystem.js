@@ -1,6 +1,11 @@
 /**
  * LevelSystem — XP thresholds, stat growth, and level-up logic.
  *
+ * R100 enforcement: Level-ups MUST increase stats only (hp, attack, defense).
+ * The combat system provides exactly three fixed actions (Attack, Defend,
+ * Use Item). No abilities are unlocked through leveling — do not add
+ * ability/skill unlock paths here.
+ *
  * No Phaser dependency; operates on plain player-data objects.
  *
  * Formulas (derived from the progression table in data-model.md):
@@ -22,6 +27,7 @@ export default class LevelSystem {
 
     /**
      * Base stats for a given level (before equipment bonuses).
+     * Returns ONLY hp/attack/defense per R100 — no abilities.
      * @param {number} level
      * @returns {{ maxHp: number, attack: number, defense: number }}
      */
