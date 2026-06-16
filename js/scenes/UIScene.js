@@ -52,8 +52,17 @@ export class UIScene extends Phaser.Scene {
         this.keyEsc = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ESC);
 
         this.keyC.on('down', () => this._toggleCharScreen());
+
+        // ── Quest log ────────────────────────────────────────────────
+        this.questLogVisible = false;
+        this.questLogContainer = null;
+
+        this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+        this.keyQ.on('down', () => this._toggleQuestLog());
+
         this.keyEsc.on('down', () => {
-            if (this.charScreenVisible) this._hideCharScreen();
+            if (this.questLogVisible) this._hideQuestLog();
+            else if (this.charScreenVisible) this._hideCharScreen();
         });
 
         // ── Dialog box ────────────────────────────────────────────────
@@ -269,6 +278,195 @@ export class UIScene extends Phaser.Scene {
             this.charContainer = null;
         }
         this.charScreenVisible = false;
+    }
+
+    /* ── quest log ─────────────────────────────────────────────────── */
+
+    _toggleQuestLog() {
+        if (this.questLogVisible) {
+            this._hideQuestLog();
+        } else {
+            if (this.dialogActive || this.charScreenVisible) return;
+            this._showQuestLog();
+        }
+    }
+
+    _showQuestLog() {
+        const worldScene = this.scene.get('WorldScene');
+        if (!worldScene || !worldScene.player) return;
+
+        const player = worldScene.player;
+        this.questLogVisible = true;
+
+        const cam = this.cameras.main;
+        const cx = cam.width / 2;
+        const cy = cam.height / 2;
+        const panelW = 380;
+        const maxPanelH = cam.height - 60;
+
+        // Collect quest data.
+        const activeQuests = QuestSystem.getActiveQuests(player);
+        const completedQuests = QuestSystem.getCompletedQuests(player);
+        const hasQuests = activeQuests.length > 0 || completedQuests.length > 0;
+
+        // Calculate panel height dynamically.
+        // Header(40) + sections + hint(30) + padding
+        let contentHeight = 50; // title + top padding
+        if (!hasQuests) {
+            contentHeight += 30;
+        } else {
+            if (activeQuests.length > 0) {
+                contentHeight += 24; // section header
+                contentHeight += activeQuests.length * 64; // per quest
+            }
+            if (completedQuests.length > 0) {
+                if (activeQuests.length > 0) contentHeight += 12; // gap
+                contentHeight += 24; // section header
+                contentHeight += completedQuests.length * 48; // per quest (no progress line)
+            }
+        }
+        contentHeight += 32; // close hint
+        const panelH = Math.min(contentHeight, maxPanelH);
+
+        this.questLogContainer = this.add.container(cx, cy);
+
+        // Panel background.
+        const bg = this.add.graphics();
+        bg.fillStyle(0x111118, 0.92);
+        bg.fillRoundedRect(-panelW / 2, -panelH / 2, panelW, panelH, 6);
+        bg.lineStyle(2, 0x6666aa, 1);
+        bg.strokeRoundedRect(-panelW / 2, -panelH / 2, panelW, panelH, 6);
+        this.questLogContainer.add(bg);
+
+        const headerStyle = { fontSize: '16px', fontFamily: 'monospace', color: '#ffdd44', stroke: '#000000', strokeThickness: 2 };
+        const sectionStyle = { fontSize: '13px', fontFamily: 'monospace', color: '#aaaacc' };
+        const nameStyle = { fontSize: '13px', fontFamily: 'monospace', color: '#ffffff' };
+        const descStyle = { fontSize: '11px', fontFamily: 'monospace', color: '#999999', wordWrap: { width: panelW - 56 } };
+        const progressStyle = { fontSize: '11px', fontFamily: 'monospace', color: '#66cc66' };
+        const completedNameStyle = { fontSize: '13px', fontFamily: 'monospace', color: '#888888' };
+        const checkStyle = { fontSize: '13px', fontFamily: 'monospace', color: '#66cc66' };
+        const hintStyle = { fontSize: '11px', fontFamily: 'monospace', color: '#666666' };
+
+        const left = -panelW / 2 + 20;
+        let y = -panelH / 2 + 18;
+
+        // Title.
+        const title = this.add.text(0, y, 'QUEST LOG', headerStyle).setOrigin(0.5, 0);
+        this.questLogContainer.add(title);
+        y += 32;
+
+        // Divider helper.
+        const addDivider = (yPos) => {
+            const line = this.add.graphics();
+            line.lineStyle(1, 0x444466, 0.6);
+            line.beginPath();
+            line.moveTo(-panelW / 2 + 16, yPos);
+            line.lineTo(panelW / 2 - 16, yPos);
+            line.strokePath();
+            this.questLogContainer.add(line);
+        };
+
+        addDivider(y);
+        y += 10;
+
+        if (!hasQuests) {
+            const empty = this.add.text(0, y + 6, 'No quests yet.', descStyle).setOrigin(0.5, 0);
+            this.questLogContainer.add(empty);
+            y += 30;
+        } else {
+            // Active quests.
+            if (activeQuests.length > 0) {
+                const activeLabel = this.add.text(left, y, 'Active', sectionStyle);
+                this.questLogContainer.add(activeLabel);
+                y += 22;
+
+                for (const entry of activeQuests) {
+                    const def = QuestSystem.getDefinition(entry.questId);
+                    if (!def) continue;
+
+                    const qName = this.add.text(left + 8, y, def.title, nameStyle);
+                    this.questLogContainer.add(qName);
+                    y += 16;
+
+                    const qDesc = this.add.text(left + 8, y, def.description, descStyle);
+                    this.questLogContainer.add(qDesc);
+                    y += 16;
+
+                    const progressText = this._formatQuestProgress(def, entry);
+                    const qProgress = this.add.text(left + 8, y, progressText, progressStyle);
+                    this.questLogContainer.add(qProgress);
+                    y += 24;
+                }
+            }
+
+            // Completed quests.
+            if (completedQuests.length > 0) {
+                if (activeQuests.length > 0) {
+                    addDivider(y);
+                    y += 10;
+                }
+
+                const compLabel = this.add.text(left, y, 'Completed', sectionStyle);
+                this.questLogContainer.add(compLabel);
+                y += 22;
+
+                for (const entry of completedQuests) {
+                    const def = QuestSystem.getDefinition(entry.questId);
+                    if (!def) continue;
+
+                    const check = this.add.text(left + 8, y, '✓', checkStyle);
+                    this.questLogContainer.add(check);
+
+                    const qName = this.add.text(left + 24, y, def.title, completedNameStyle);
+                    this.questLogContainer.add(qName);
+                    y += 16;
+
+                    const qDesc = this.add.text(left + 24, y, def.description, descStyle);
+                    this.questLogContainer.add(qDesc);
+                    y += 24;
+                }
+            }
+        }
+
+        // Close hint.
+        const hint = this.add.text(0, panelH / 2 - 22, 'Q / Esc to close', hintStyle).setOrigin(0.5);
+        this.questLogContainer.add(hint);
+    }
+
+    /**
+     * Build a human-readable progress string for a quest entry.
+     * @param {object} def — quest definition
+     * @param {object} entry — quest log entry
+     * @returns {string}
+     */
+    _formatQuestProgress(def, entry) {
+        const current = entry.progress;
+        const total = def.targetCount;
+        switch (def.objectiveType) {
+            case 'defeat': {
+                // Capitalize targetId and add "defeated".
+                const name = def.targetId.charAt(0).toUpperCase() + def.targetId.slice(1) + 's';
+                return `${current}/${total} ${name} defeated`;
+            }
+            case 'find_item': {
+                const name = def.targetId.replace(/_/g, ' ');
+                return `${current}/${total} ${name} found`;
+            }
+            case 'talk_to_npc': {
+                const name = def.targetId.replace(/_/g, ' ');
+                return `${current}/${total} Talk to ${name}`;
+            }
+            default:
+                return `${current}/${total}`;
+        }
+    }
+
+    _hideQuestLog() {
+        if (this.questLogContainer) {
+            this.questLogContainer.destroy();
+            this.questLogContainer = null;
+        }
+        this.questLogVisible = false;
     }
 
     /* ── dialog box ────────────────────────────────────────────────── */
@@ -562,6 +760,7 @@ export class UIScene extends Phaser.Scene {
         this.game.events.off('player-stats-changed', this._onStatsChanged, this);
         this.game.events.off('show-dialog', this._onShowDialog, this);
         this._hideCharScreen();
+        this._hideQuestLog();
         if (this.dialogActive) this._closeDialog('done');
     }
 }
