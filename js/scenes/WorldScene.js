@@ -2,8 +2,11 @@ import { TILE_SIZE } from '../utils/helpers.js';
 import { MAP_CONFIG } from '../data/maps.js';
 import Player from '../entities/Player.js';
 import Enemy from '../entities/Enemy.js';
+import NPC from '../entities/NPC.js';
 import ENEMIES from '../data/enemies.js';
+import NPCS from '../data/npcs.js';
 import LevelSystem from '../systems/LevelSystem.js';
+import QuestSystem from '../systems/QuestSystem.js';
 
 export class WorldScene extends Phaser.Scene {
     constructor() {
@@ -13,6 +16,8 @@ export class WorldScene extends Phaser.Scene {
     create(data) {
         const mode = data && data.mode ? data.mode : 'new_game';
         this.inCombat = false;
+        this._dialogActive = false;
+        this._activeNPC = null;
 
         // Build the tile map from preloaded Tiled JSON.
         const map = this.make.tilemap({ key: MAP_CONFIG.key });
@@ -64,6 +69,19 @@ export class WorldScene extends Phaser.Scene {
         // Spawn enemies and register overlap detection with the player.
         this.enemies = this._spawnEnemies(map);
 
+        // Spawn NPCs from data catalog and place them on the map.
+        this.npcs = this._spawnNPCs(map);
+
+        // Register interaction keys (Enter / Space) for NPC dialog.
+        this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+        this.keyEnter.on('down', () => this._onInteractKey());
+        this.keySpace.on('down', () => this._onInteractKey());
+
+        // Listen for dialog events from UIScene.
+        this.game.events.on('dialog-quest-resolved', this._onQuestResolved, this);
+        this.game.events.on('dialog-closed', this._onDialogClosed, this);
+
         // Camera follows the player, clamped to the map edges.
         const cam = this.cameras.main;
         cam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
@@ -78,6 +96,7 @@ export class WorldScene extends Phaser.Scene {
     }
 
     update() {
+        if (this._dialogActive) return;
         this.player.update();
     }
 
@@ -125,6 +144,93 @@ export class WorldScene extends Phaser.Scene {
         }
 
         return enemies;
+    }
+
+    /* ── NPC spawning ─────────────────────────────────────────────── */
+
+    /**
+     * Read NPC spawn points from the Tiled Objects layer (objects with
+     * type "npc" and name matching an NPCS key). Falls back to positions
+     * defined in the NPCS data catalog.
+     */
+    _spawnNPCs(map) {
+        const npcs = [];
+
+        const objectsLayer = map.getObjectLayer(MAP_CONFIG.layers.objects);
+        let spawns = [];
+        if (objectsLayer) {
+            spawns = objectsLayer.objects.filter(obj => obj.type === 'npc');
+        }
+
+        if (spawns.length > 0) {
+            for (const obj of spawns) {
+                const template = NPCS[obj.name];
+                if (!template) continue;
+                const tileX = Math.floor(obj.x / TILE_SIZE);
+                const tileY = Math.floor(obj.y / TILE_SIZE);
+                const npc = new NPC(this, tileX, tileY, template);
+                npcs.push(npc);
+            }
+        } else {
+            for (const key of Object.keys(NPCS)) {
+                const template = NPCS[key];
+                const npc = new NPC(this, template.x, template.y, template);
+                npcs.push(npc);
+            }
+        }
+
+        return npcs;
+    }
+
+    /* ── NPC interaction ──────────────────────────────────────────── */
+
+    /**
+     * Called when Enter or Space is pressed. Checks if the player is
+     * within one tile of any NPC and triggers dialog if so.
+     */
+    _onInteractKey() {
+        if (this.inCombat || this._dialogActive) return;
+
+        const npc = this._findNearbyNPC();
+        if (!npc) return;
+
+        this._dialogActive = true;
+        this._activeNPC = npc;
+
+        this.game.events.emit('show-dialog', {
+            npcName: npc.name,
+            lines: [...npc.dialog],
+            questId: npc.questId,
+        });
+    }
+
+    /**
+     * Find an NPC within interaction range (1 tile) of the player.
+     * @returns {NPC|null}
+     */
+    _findNearbyNPC() {
+        for (const npc of this.npcs) {
+            const dx = Math.abs(this.player.tileX - npc.tileX);
+            const dy = Math.abs(this.player.tileY - npc.tileY);
+            if (dx <= 1 && dy <= 1) return npc;
+        }
+        return null;
+    }
+
+    /**
+     * Handle quest accept/decline from UIScene's quest prompt.
+     */
+    _onQuestResolved({ questId, accepted }) {
+        if (!accepted) return;
+        QuestSystem.acceptQuest(this.player, questId);
+    }
+
+    /**
+     * Reset dialog state when UIScene closes the dialog box.
+     */
+    _onDialogClosed() {
+        this._dialogActive = false;
+        this._activeNPC = null;
     }
 
     /* ── combat transition ─────────────────────────────────────────── */
