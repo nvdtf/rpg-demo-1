@@ -114,7 +114,7 @@
 - [x] T031 [US4] Create `js/systems/QuestSystem.js`: accept quest (add QuestEntry to player), update progress on relevant events (enemy defeated, item found, NPC talked to), detect completion, distribute rewards (XP, gold, item via InventorySystem or direct), query active/completed quests
 - [x] T032 [US4] Add dialog box UI to `js/scenes/UIScene.js`: semi-transparent text box at bottom of screen, sequential dialog line display with Enter/Space to advance, quest accept/decline prompt at end of quest-giving dialog
 - [x] T033 [US4] Add quest log overlay to `js/scenes/UIScene.js` toggled by Q key: list active and completed quests with name, description, objective progress (e.g., "2/3 Slimes defeated"), close on Q or Escape
-- [ ] T034 [US4] Place NPCs on world map in `js/scenes/WorldScene.js`: instantiate NPC entities from `npcs.js` data, register interaction key (Enter/Space) proximity check, connect dialog → QuestSystem accept flow, load NPC sprites in BootScene.js
+- [x] T034 [US4] Place NPCs on world map in `js/scenes/WorldScene.js`: instantiate NPC entities from `npcs.js` data, register interaction key (Enter/Space) proximity check, connect dialog → QuestSystem accept flow, load NPC sprites in BootScene.js
 
 **Checkpoint**: User Stories 1–4 work — explore, fight, level up, talk to NPCs, complete quests
 

@@ -769,9 +769,18 @@
       "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
+    },
+    "T034": {
+      "id": "T034",
+      "issue": 65,
+      "pr": 66,
+      "branch": "task/T034",
+      "status": "in_review",
+      "review_cycles": 0,
+      "worker_runs": 1
     }
   },
-  "sessions": 75,
+  "sessions": 77,
   "history": [
     {
       "from": "IDLE",
