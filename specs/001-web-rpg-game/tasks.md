@@ -55,7 +55,7 @@
 - [x] T011 [US1] Create `js/entities/Player.js` as a class wrapping a Phaser Arcade sprite: grid-aligned movement via keyboard input (arrow keys + WASD), walk animation playback by direction, collision body sized to one tile
 - [x] T012 [US1] Create `js/scenes/WorldScene.js`: load tilemap from `world.json`, create tile layers, set wall collision by property, spawn Player entity at map spawn point, configure camera to follow player with world bounds, handle keyboard input for movement
 - [x] T013 [US1] Create `js/scenes/UIScene.js` as parallel overlay scene (launched via `scene.launch`): render player health bar in corner using Phaser Graphics, listen for player state changes to update display
-- [ ] T014 [US1] Wire MenuScene "New Game" button to start WorldScene with `{ mode: "new_game" }` per contracts/game-state.md — verify full probe: page loads → menu appears → new game → world renders → player moves → camera follows → collision works
+- [x] T014 [US1] Wire MenuScene "New Game" button to start WorldScene with `{ mode: "new_game" }` per contracts/game-state.md — verify full probe: page loads → menu appears → new game → world renders → player moves → camera follows → collision works
 
 **Checkpoint**: User Story 1 (Probe) is fully functional — navigable tile world with movement and collision
 
