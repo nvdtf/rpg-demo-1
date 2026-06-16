@@ -43,6 +43,10 @@ export class WorldScene extends Phaser.Scene {
         const cam = this.cameras.main;
         cam.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
         cam.startFollow(this.player.sprite, true);
+
+        // Launch the HUD overlay and broadcast initial player stats.
+        this.scene.launch('UIScene');
+        this.player.emitStats();
     }
 
     update() {
