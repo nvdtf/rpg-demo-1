@@ -77,7 +77,7 @@
 - [x] T020 [US2] Create `js/systems/CombatSystem.js` with 5-state FSM (PLAYER_TURN, PLAYER_ANIMATING, ENEMY_TURN, ENEMY_ANIMATING, COMBAT_END): damage formula `max(1, attacker.attack - defender.defense)`, defend action doubles effective defense, use-item action for consumables
 - [x] T021 [US2] Create `js/scenes/CombatScene.js` with FF/DQ side-view layout: player sprite on left, enemy on right, health bars (Phaser Graphics), action menu (Attack / Defend / Item) navigable by keyboard (1/2/3 keys + click), turn loop driven by CombatSystem, victory/defeat outcomes per contracts/game-state.md
 - [x] T022 [US2] Create `js/scenes/GameOverScene.js` showing "Game Over" text with "New Game" and "Load Save" buttons (load disabled if no save exists)
-- [ ] T023 [US2] Implement scene transitions in `js/scenes/WorldScene.js`: on enemy overlap → `scene.sleep('WorldScene')` + `scene.launch('CombatScene', { player, enemy })` per research.md R3; on combat victory → `scene.stop('CombatScene')` + `scene.wake('WorldScene', { combatResult })` → mark enemy defeated and remove sprite; on defeat → start GameOverScene
+- [x] T023 [US2] Implement scene transitions in `js/scenes/WorldScene.js`: on enemy overlap → `scene.sleep('WorldScene')` + `scene.launch('CombatScene', { player, enemy })` per research.md R3; on combat victory → `scene.stop('CombatScene')` + `scene.wake('WorldScene', { combatResult })` → mark enemy defeated and remove sprite; on defeat → start GameOverScene
 
 **Checkpoint**: User Stories 1 AND 2 work — player can explore and fight enemies with full combat loop
 
