@@ -6,6 +6,11 @@
 
 **Tests**: Not requested — manual browser testing per plan.md. No automated test tasks generated.
 
+**Delta 1 Requirements** (decided from probe feedback):
+- R100 (D3): Level-ups MUST increase stats only; 3 fixed combat actions (Attack/Defend/Use Item)
+- R101 (D4): Small map ~50×50 tiles, tightly focused with minimal empty space
+- R102 (D8): Light HUD — small health bar in corner only during exploration
+
 **Organization**: Tasks grouped by user story (P1–P6) for independent implementation and testing.
 
 ## Format: `[ID] [P?] [Story] Description`
@@ -167,6 +172,20 @@
 
 ---
 
+## Phase 10: Delta 1 — Probe Feedback Requirements (R100, R101, R102)
+
+**Purpose**: Validate and enforce the three newly decided requirements from probe feedback. These were deferred dimensions now resolved by stakeholder vote.
+
+- [ ] T049 [P] Validate and enforce R100 in `js/systems/LevelSystem.js` — ensure `addXp()` and level-up logic only increase hp, attack, and defense stats with no ability unlock mechanism; remove any ability-related code paths if present
+- [ ] T050 [P] Validate and enforce R100 in `js/scenes/CombatScene.js` — ensure exactly 3 fixed actions (Attack, Defend, Use Item) are hardcoded in the action menu with no level-gated, conditional, or dynamically unlocked combat abilities
+- [ ] T051 Validate and enforce R101 in `assets/maps/world.json` — confirm map dimensions are approximately 50×50 tiles with a tightly focused layout and minimal empty space; if map has excessive filler areas or wrong dimensions, redesign the tile layout to be compact
+- [ ] T052 Validate and enforce R102 in `js/scenes/UIScene.js` — ensure the exploration HUD displays only a small health bar in one corner of the screen; remove any persistent quest tracker, minimap, or hotkey hints from the exploration overlay; confirm stats, inventory, and quests are accessible only through menu screens (C, I, Q keys)
+- [ ] T053 Run end-to-end validation of delta requirements R100, R101, R102 in browser per `specs/001-web-rpg-game/quickstart.md` — verify combat presents exactly 3 actions (no extras), world map is tightly focused ~50×50 tiles, and HUD shows only a corner health bar during exploration
+
+**Checkpoint**: All delta requirements validated and enforced — game complies with R100, R101, R102
+
+---
+
 ## Dependencies & Execution Order
 
 ### Phase Dependencies
@@ -181,6 +200,10 @@
   - US5 (Inventory) builds on US2 (Combat) — loot comes from combat
   - US6 (Save/Load) serializes state from all prior stories
 - **Polish (Phase 9)**: Depends on all user stories being complete
+- **Delta 1 (Phase 10)**: Depends on Phase 9 completion — validates decided probe-feedback requirements against deployed code
+  - T049 + T050 can run in parallel (different files)
+  - T051 and T052 are independent and can run in parallel with T049/T050
+  - T053 (end-to-end validation) depends on T049–T052 completing
 
 ### Within Each User Story
 
@@ -198,6 +221,7 @@
 - T015 + T016 + T017 (enemy data + item data + enemy sprites) in Phase 4
 - T027 + T028 + T029 (NPC data + quest data + NPC sprites) in Phase 6
 - T045 + T046 (transition effects + animation polish) in Phase 9
+- T049 + T050 + T051 + T052 (all delta validation tasks) in Phase 10
 
 ---
 
@@ -216,6 +240,21 @@ T020: Create js/systems/CombatSystem.js (needs T015, T016)
 T021: Create js/scenes/CombatScene.js (needs T020)
 T022: Create js/scenes/GameOverScene.js (independent)
 T023: Implement scene transitions (needs T019, T021, T022)
+```
+
+---
+
+## Parallel Example: Phase 10 (Delta 1)
+
+```
+# Launch all validation tasks together (different files, no dependencies):
+T049: Validate LevelSystem.js for R100 (stats-only level-ups)
+T050: Validate CombatScene.js for R100 (3 fixed actions)
+T051: Validate world.json for R101 (~50×50 tight map)
+T052: Validate UIScene.js for R102 (corner health bar only)
+
+# Then sequentially:
+T053: End-to-end browser validation of R100+R101+R102 (needs T049–T052)
 ```
 
 ---
