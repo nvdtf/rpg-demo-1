@@ -38,19 +38,14 @@ export class WorldScene extends Phaser.Scene {
         // Determine player spawn based on mode.
         let spawnX = MAP_CONFIG.playerSpawn.x;
         let spawnY = MAP_CONFIG.playerSpawn.y;
+        let saveData = null;
 
         if (mode === 'load_game') {
-            const raw = localStorage.getItem('rpg_save_v1');
-            if (raw) {
-                try {
-                    const save = JSON.parse(raw);
-                    if (save.version === 1 && save.player) {
-                        spawnX = save.player.x;
-                        spawnY = save.player.y;
-                    }
-                } catch (_) {
-                    // Corrupt save — fall through to default spawn.
-                }
+            // Accept save data passed from MenuScene or pause menu; fall back to loading directly.
+            saveData = (data && data.saveData) ? data.saveData : SaveSystem.load().data;
+            if (saveData && saveData.player) {
+                spawnX = saveData.player.x;
+                spawnY = saveData.player.y;
             }
         } else {
             // new_game — resolve spawn from the Objects layer, falling back to config.
@@ -71,8 +66,27 @@ export class WorldScene extends Phaser.Scene {
         this.player.setCollisionLayers([this.wallsLayer]);
         this.player.setMapBounds(map.width, map.height);
 
+        // Restore player stats, inventory, equipment, and quest progress from save.
+        if (saveData && saveData.player) {
+            SaveSystem.applyToPlayer(this.player, saveData.player);
+            // Restore top-level quest log from save (applyToPlayer sets player.questLog
+            // from saveData.player.questLog, but quest log is saved at the root level).
+            if (saveData.questLog) {
+                this.player.questLog = saveData.questLog.map(e => ({ ...e }));
+            }
+        }
+
         // Spawn enemies and register overlap detection with the player.
         this.enemies = this._spawnEnemies(map);
+
+        // Mark defeated enemies as hidden when loading a save.
+        if (saveData && saveData.defeatedEnemies && saveData.defeatedEnemies.length > 0) {
+            for (const enemy of this.enemies) {
+                if (saveData.defeatedEnemies.includes(enemy.id)) {
+                    enemy.defeat();
+                }
+            }
+        }
 
         // Spawn NPCs from data catalog and place them on the map.
         this.npcs = this._spawnNPCs(map);
