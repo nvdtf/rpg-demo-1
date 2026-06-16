@@ -13,6 +13,10 @@ export default class Player {
         this.isMoving = false;
         this.facing = 'down';
 
+        /** Base stats. */
+        this.maxHp = 50;
+        this.hp = this.maxHp;
+
         /** Tile-map layers the player cannot walk through. */
         this.collisionLayers = [];
         /** Map dimensions in tiles (set via setMapBounds). */
@@ -31,6 +35,16 @@ export default class Player {
             down:  Phaser.Input.Keyboard.KeyCodes.S,
             left:  Phaser.Input.Keyboard.KeyCodes.A,
             right: Phaser.Input.Keyboard.KeyCodes.D,
+        });
+    }
+
+    /* ── stats / events ─────────────────────────────────────────────── */
+
+    /** Broadcast current stats on the global game event bus. */
+    emitStats() {
+        this.scene.game.events.emit('player-stats-changed', {
+            hp: this.hp,
+            maxHp: this.maxHp,
         });
     }
 
