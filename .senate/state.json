@@ -1,5 +1,5 @@
 {
-  "phase": "DELTA",
+  "phase": "ANALYZED",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -1048,6 +1048,12 @@
       "to": "DELTA",
       "at": "2026-06-16T02:45:55.923405Z",
       "note": "delta loop 1/2"
+    },
+    {
+      "from": "DELTA",
+      "to": "ANALYZED",
+      "at": "2026-06-16T02:52:16.056314Z",
+      "note": "delta 1 ratified + analyzed"
     }
   ]
 }
