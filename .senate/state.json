@@ -1008,9 +1008,18 @@
       "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
+    },
+    "T053": {
+      "id": "T053",
+      "issue": 103,
+      "pr": 104,
+      "branch": "task/T053",
+      "status": "in_review",
+      "review_cycles": 0,
+      "worker_runs": 1
     }
   },
-  "sessions": 119,
+  "sessions": 121,
   "history": [
     {
       "from": "IDLE",
