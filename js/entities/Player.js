@@ -1,4 +1,5 @@
 import { TILE_SIZE, Direction, tileToPixel } from '../utils/helpers.js';
+import LevelSystem from '../systems/LevelSystem.js';
 
 export default class Player {
     /**
@@ -13,9 +14,15 @@ export default class Player {
         this.isMoving = false;
         this.facing = 'down';
 
-        /** Base stats. */
-        this.maxHp = 50;
+        /** Base stats derived from LevelSystem. */
+        this.level = 1;
+        this.xp = 0;
+        this.xpToNext = LevelSystem.getXpForLevel(1);
+        const stats = LevelSystem.getStatsForLevel(1);
+        this.maxHp = stats.maxHp;
         this.hp = this.maxHp;
+        this.attack = stats.attack;
+        this.defense = stats.defense;
 
         /** Tile-map layers the player cannot walk through. */
         this.collisionLayers = [];
