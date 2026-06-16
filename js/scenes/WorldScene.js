@@ -71,6 +71,9 @@ export class WorldScene extends Phaser.Scene {
         // Launch the HUD overlay and broadcast initial player stats.
         this.scene.launch('UIScene');
         this.player.emitStats();
+
+        // Listen for wake event — fired when returning from combat.
+        this.events.on('wake', this._onWake, this);
     }
 
     update() {
@@ -127,14 +130,15 @@ export class WorldScene extends Phaser.Scene {
 
     /**
      * Called when the player sprite overlaps an enemy sprite.
-     * Pauses the world, launches CombatScene with the relevant data,
-     * and listens for a 'combat-end' event to resume.
+     * Sleeps the world, launches CombatScene with the relevant data.
+     * CombatScene emits 'combat-end' which triggers _onCombatEnd.
      */
     _onEnemyContact(enemy) {
         if (this.inCombat || enemy.defeated) return;
         this.inCombat = true;
+        this._combatEnemy = enemy;
 
-        this.scene.pause();
+        this.scene.sleep('WorldScene');
         this.scene.launch('CombatScene', {
             enemy: {
                 id:        enemy.id,
@@ -152,23 +156,54 @@ export class WorldScene extends Phaser.Scene {
             },
         });
 
-        // CombatScene emits 'combat-end' with { victory, playerHp }.
         this.scene.get('CombatScene').events.once('combat-end', (result) => {
+            this._onCombatEnd(result);
+        });
+    }
+
+    /**
+     * Handle combat results. On victory: stop CombatScene, wake WorldScene,
+     * mark enemy defeated, remove sprite. On defeat: transition to GameOverScene.
+     */
+    _onCombatEnd(result) {
+        this.scene.stop('CombatScene');
+
+        if (result.victory) {
+            // Wake WorldScene — the 'wake' event handler will process results.
+            this._pendingCombatResult = result;
+            this.scene.wake('WorldScene');
+        } else {
+            // Player defeated — go to Game Over. Stop this scene entirely.
+            this.scene.stop('UIScene');
+            this.scene.stop('WorldScene');
+            this.scene.start('GameOverScene');
+        }
+    }
+
+    /**
+     * Fired by Phaser when this scene wakes from sleep.
+     * Applies combat results: update HP, mark enemy defeated, remove sprite.
+     */
+    _onWake() {
+        const result = this._pendingCombatResult;
+        this._pendingCombatResult = null;
+
+        if (result) {
             if (result.playerHp !== undefined) {
                 this.player.hp = result.playerHp;
                 this.player.emitStats();
             }
-            if (result.victory) {
-                enemy.defeat();
+
+            if (result.victory && this._combatEnemy) {
+                this._combatEnemy.defeat();
             }
+        }
 
-            this.scene.stop('CombatScene');
-            this.scene.resume();
+        this._combatEnemy = null;
 
-            // Brief cooldown so the overlap doesn't re-trigger instantly.
-            this.time.delayedCall(300, () => {
-                this.inCombat = false;
-            });
+        // Brief cooldown so the overlap doesn't re-trigger instantly.
+        this.time.delayedCall(300, () => {
+            this.inCombat = false;
         });
     }
 }
