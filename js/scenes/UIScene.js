@@ -5,6 +5,9 @@
  * game world without blocking input.  Uses the global game event bus
  * (`this.game.events`) to receive player stat updates.
  */
+
+import QuestSystem from '../systems/QuestSystem.js';
+
 export class UIScene extends Phaser.Scene {
     constructor() {
         super('UIScene');
@@ -52,6 +55,24 @@ export class UIScene extends Phaser.Scene {
         this.keyEsc.on('down', () => {
             if (this.charScreenVisible) this._hideCharScreen();
         });
+
+        // ── Dialog box ────────────────────────────────────────────────
+        this.dialogActive = false;
+        this.dialogContainer = null;
+        this.dialogLines = [];
+        this.dialogLineIndex = 0;
+        this.dialogNpcName = '';
+        this.dialogQuestId = null;
+        this.dialogShowingPrompt = false;
+
+        this.keyEnter = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.ENTER);
+        this.keySpace = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+
+        this.keyEnter.on('down', () => this._onDialogAdvance());
+        this.keySpace.on('down', () => this._onDialogAdvance());
+
+        // Listen for dialog events from WorldScene / NPC interaction.
+        this.game.events.on('show-dialog', this._onShowDialog, this);
 
         // Tear down listener when scene shuts down or is destroyed.
         this.events.once('shutdown', this._cleanup, this);
@@ -250,10 +271,297 @@ export class UIScene extends Phaser.Scene {
         this.charScreenVisible = false;
     }
 
+    /* ── dialog box ────────────────────────────────────────────────── */
+
+    /**
+     * Open the dialog box. Expects an event payload:
+     *   { npcName: string, lines: string[], questId: string|null }
+     */
+    _onShowDialog({ npcName, lines, questId }) {
+        if (this.dialogActive) return;
+
+        this.dialogActive = true;
+        this.dialogLines = lines;
+        this.dialogLineIndex = 0;
+        this.dialogNpcName = npcName;
+        this.dialogQuestId = questId;
+        this.dialogShowingPrompt = false;
+
+        this._buildDialogBox();
+        this._renderDialogLine();
+    }
+
+    /** Build the static dialog box container at the bottom of the screen. */
+    _buildDialogBox() {
+        const cam = this.cameras.main;
+        const boxW = cam.width - 40;
+        const boxH = 120;
+        const boxX = cam.width / 2;
+        const boxY = cam.height - boxH / 2 - 10;
+
+        this.dialogContainer = this.add.container(boxX, boxY);
+
+        // Semi-transparent background panel.
+        const bg = this.add.graphics();
+        bg.fillStyle(0x111118, 0.88);
+        bg.fillRoundedRect(-boxW / 2, -boxH / 2, boxW, boxH, 6);
+        bg.lineStyle(2, 0x6666aa, 1);
+        bg.strokeRoundedRect(-boxW / 2, -boxH / 2, boxW, boxH, 6);
+        this.dialogContainer.add(bg);
+
+        // NPC name label (top-left of the box).
+        this.dialogNameText = this.add.text(-boxW / 2 + 16, -boxH / 2 + 10, '', {
+            fontSize: '14px',
+            fontFamily: 'monospace',
+            color: '#ffdd44',
+            stroke: '#000000',
+            strokeThickness: 2,
+        });
+        this.dialogContainer.add(this.dialogNameText);
+
+        // Dialog line body text.
+        this.dialogBodyText = this.add.text(-boxW / 2 + 16, -boxH / 2 + 32, '', {
+            fontSize: '13px',
+            fontFamily: 'monospace',
+            color: '#ffffff',
+            wordWrap: { width: boxW - 32 },
+            lineSpacing: 4,
+        });
+        this.dialogContainer.add(this.dialogBodyText);
+
+        // "Enter / Space to continue" hint (bottom-right).
+        this.dialogHintText = this.add.text(boxW / 2 - 16, boxH / 2 - 14, 'Enter / Space ▸', {
+            fontSize: '11px',
+            fontFamily: 'monospace',
+            color: '#888888',
+        }).setOrigin(1, 1);
+        this.dialogContainer.add(this.dialogHintText);
+
+        // Quest prompt elements (hidden until needed).
+        this.dialogPromptContainer = this.add.container(0, 0);
+        this.dialogPromptContainer.setVisible(false);
+        this.dialogContainer.add(this.dialogPromptContainer);
+    }
+
+    /** Render the current dialog line or show the quest prompt. */
+    _renderDialogLine() {
+        if (this.dialogLineIndex < this.dialogLines.length) {
+            this.dialogNameText.setText(this.dialogNpcName);
+            this.dialogBodyText.setText(this.dialogLines[this.dialogLineIndex]);
+            this.dialogHintText.setVisible(true);
+            this.dialogPromptContainer.setVisible(false);
+        }
+    }
+
+    /** Called when Enter or Space is pressed during dialog. */
+    _onDialogAdvance() {
+        if (!this.dialogActive) return;
+        if (this.dialogShowingPrompt) return; // prompt handles its own input
+
+        this.dialogLineIndex++;
+
+        if (this.dialogLineIndex < this.dialogLines.length) {
+            this._renderDialogLine();
+        } else {
+            // All lines read — check for quest prompt.
+            if (this.dialogQuestId) {
+                this._showQuestPrompt();
+            } else {
+                this._closeDialog('done');
+            }
+        }
+    }
+
+    /** Show accept / decline buttons for a quest-giving NPC. */
+    _showQuestPrompt() {
+        const def = QuestSystem.getDefinition(this.dialogQuestId);
+        if (!def) {
+            this._closeDialog('done');
+            return;
+        }
+
+        // Check if quest is already in the log.
+        const worldScene = this.scene.get('WorldScene');
+        const player = worldScene && worldScene.player;
+        if (player) {
+            const entry = QuestSystem.getQuestEntry(player, this.dialogQuestId);
+            if (entry) {
+                // Quest already accepted or completed — skip prompt.
+                this._closeDialog('done');
+                return;
+            }
+        }
+
+        this.dialogShowingPrompt = true;
+        this.dialogHintText.setVisible(false);
+
+        // Update body to quest description.
+        this.dialogBodyText.setText(`Quest: ${def.title}\n${def.description}`);
+
+        // Build the prompt buttons.
+        this.dialogPromptContainer.removeAll(true);
+
+        const cam = this.cameras.main;
+        const boxW = cam.width - 40;
+
+        const btnStyle = { fontSize: '13px', fontFamily: 'monospace', color: '#ffffff' };
+        const btnHighlight = '#ffdd44';
+        const btnDefault = '#ffffff';
+
+        // Accept button
+        const acceptBg = this.add.graphics();
+        acceptBg.fillStyle(0x336633, 0.9);
+        acceptBg.fillRoundedRect(-boxW / 4 - 60, -6, 120, 28, 4);
+        this.dialogPromptContainer.add(acceptBg);
+
+        const acceptText = this.add.text(-boxW / 4, 8, 'Accept', btnStyle).setOrigin(0.5);
+        this.dialogPromptContainer.add(acceptText);
+
+        // Decline button
+        const declineBg = this.add.graphics();
+        declineBg.fillStyle(0x663333, 0.9);
+        declineBg.fillRoundedRect(boxW / 4 - 60, -6, 120, 28, 4);
+        this.dialogPromptContainer.add(declineBg);
+
+        const declineText = this.add.text(boxW / 4, 8, 'Decline', btnStyle).setOrigin(0.5);
+        this.dialogPromptContainer.add(declineText);
+
+        // Keyboard selection state.
+        this._promptSelection = 0; // 0 = Accept, 1 = Decline
+        this._promptTexts = [acceptText, declineText];
+        this._promptTexts[0].setColor(btnHighlight);
+
+        // Hint text for keyboard nav.
+        const navHint = this.add.text(0, 30, '← → to choose  ·  Enter to confirm', {
+            fontSize: '11px', fontFamily: 'monospace', color: '#888888',
+        }).setOrigin(0.5);
+        this.dialogPromptContainer.add(navHint);
+
+        // Position prompt in lower portion of dialog box.
+        this.dialogPromptContainer.setPosition(0, 18);
+        this.dialogPromptContainer.setVisible(true);
+
+        // Make buttons clickable.
+        acceptBg.setInteractive(
+            new Phaser.Geom.Rectangle(-boxW / 4 - 60, -6, 120, 28),
+            Phaser.Geom.Rectangle.Contains,
+        );
+        acceptBg.on('pointerdown', () => this._resolveQuestPrompt(true));
+        acceptBg.on('pointerover', () => {
+            this._promptSelection = 0;
+            this._updatePromptHighlight();
+        });
+
+        declineBg.setInteractive(
+            new Phaser.Geom.Rectangle(boxW / 4 - 60, -6, 120, 28),
+            Phaser.Geom.Rectangle.Contains,
+        );
+        declineBg.on('pointerdown', () => this._resolveQuestPrompt(false));
+        declineBg.on('pointerover', () => {
+            this._promptSelection = 1;
+            this._updatePromptHighlight();
+        });
+
+        // Keyboard left/right and confirm listeners.
+        this._promptKeyLeft = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        this._promptKeyRight = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        this._promptKeyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+        this._promptKeyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+        this._promptKeyLeft.on('down', () => this._movePromptSelection(-1));
+        this._promptKeyRight.on('down', () => this._movePromptSelection(1));
+        this._promptKeyA.on('down', () => this._movePromptSelection(-1));
+        this._promptKeyD.on('down', () => this._movePromptSelection(1));
+
+        // Re-bind Enter/Space to confirm prompt selection (instead of advancing dialog).
+        this.keyEnter.removeAllListeners('down');
+        this.keySpace.removeAllListeners('down');
+        this.keyEnter.on('down', () => this._confirmPromptSelection());
+        this.keySpace.on('down', () => this._confirmPromptSelection());
+    }
+
+    _movePromptSelection(dir) {
+        if (!this.dialogShowingPrompt) return;
+        this._promptSelection = Phaser.Math.Clamp(this._promptSelection + dir, 0, 1);
+        this._updatePromptHighlight();
+    }
+
+    _updatePromptHighlight() {
+        const highlight = '#ffdd44';
+        const normal = '#ffffff';
+        this._promptTexts.forEach((t, i) => {
+            t.setColor(i === this._promptSelection ? highlight : normal);
+        });
+    }
+
+    _confirmPromptSelection() {
+        if (!this.dialogShowingPrompt) return;
+        this._resolveQuestPrompt(this._promptSelection === 0);
+    }
+
+    /**
+     * Resolve the quest prompt: accept or decline the quest.
+     * @param {boolean} accepted
+     */
+    _resolveQuestPrompt(accepted) {
+        if (!this.dialogShowingPrompt) return;
+
+        this.game.events.emit('dialog-quest-resolved', {
+            questId: this.dialogQuestId,
+            accepted,
+        });
+
+        this._closeDialog(accepted ? 'quest-accepted' : 'quest-declined');
+    }
+
+    /**
+     * Close the dialog box and clean up.
+     * @param {string} reason — 'done' | 'quest-accepted' | 'quest-declined'
+     */
+    _closeDialog(reason) {
+        if (this.dialogContainer) {
+            this.dialogContainer.destroy();
+            this.dialogContainer = null;
+        }
+
+        // Clean up prompt keys if they were registered.
+        if (this._promptKeyLeft) {
+            this._promptKeyLeft.removeAllListeners('down');
+            this._promptKeyRight.removeAllListeners('down');
+            this._promptKeyA.removeAllListeners('down');
+            this._promptKeyD.removeAllListeners('down');
+            this._promptKeyLeft = null;
+            this._promptKeyRight = null;
+            this._promptKeyA = null;
+            this._promptKeyD = null;
+        }
+
+        // Restore Enter/Space to dialog-advance handlers.
+        this.keyEnter.removeAllListeners('down');
+        this.keySpace.removeAllListeners('down');
+        this.keyEnter.on('down', () => this._onDialogAdvance());
+        this.keySpace.on('down', () => this._onDialogAdvance());
+
+        this.dialogActive = false;
+        this.dialogShowingPrompt = false;
+        this.dialogLines = [];
+        this.dialogLineIndex = 0;
+        this.dialogQuestId = null;
+        this.dialogNameText = null;
+        this.dialogBodyText = null;
+        this.dialogHintText = null;
+        this.dialogPromptContainer = null;
+        this._promptTexts = null;
+
+        this.game.events.emit('dialog-closed', { reason });
+    }
+
     /* ── cleanup ────────────────────────────────────────────────────── */
 
     _cleanup() {
         this.game.events.off('player-stats-changed', this._onStatsChanged, this);
+        this.game.events.off('show-dialog', this._onShowDialog, this);
         this._hideCharScreen();
+        if (this.dialogActive) this._closeDialog('done');
     }
 }
