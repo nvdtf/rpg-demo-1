@@ -1,3 +1,5 @@
+import SaveSystem from '../systems/SaveSystem.js';
+
 export class MenuScene extends Phaser.Scene {
     constructor() {
         super('Menu');
@@ -33,7 +35,10 @@ export class MenuScene extends Phaser.Scene {
 
         // Load Game button (disabled if no save)
         this._createButton(centerX, 320, 'Load Game', hasSave, () => {
-            this.scene.start('WorldScene', { mode: 'load_game' });
+            const { data } = SaveSystem.load();
+            if (data) {
+                this.scene.start('WorldScene', { mode: 'load_game', saveData: data });
+            }
         });
 
         // Controls button
