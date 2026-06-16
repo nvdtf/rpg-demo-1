@@ -1,5 +1,5 @@
 {
-  "phase": "BUILT",
+  "phase": "PROBE_LIVE",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -491,6 +491,8 @@
       "D8"
     ]
   },
+  "feedback_issue": 95,
+  "probe_url": "https://nvdtf.github.io/rpg-demo-1/",
   "delta_loops": 0,
   "tasks": {
     "T001": {
@@ -961,6 +963,12 @@
       "to": "BUILT",
       "at": "2026-06-16T02:24:25.269274Z",
       "note": "all tasks merged"
+    },
+    {
+      "from": "BUILT",
+      "to": "PROBE_LIVE",
+      "at": "2026-06-16T02:24:57.393975Z",
+      "note": "probe live at https://nvdtf.github.io/rpg-demo-1/, feedback issue #95"
     }
   ]
 }
