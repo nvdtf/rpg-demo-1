@@ -8,6 +8,8 @@ export class WorldScene extends Phaser.Scene {
     }
 
     create(data) {
+        const mode = data && data.mode ? data.mode : 'new_game';
+
         // Build the tile map from preloaded Tiled JSON.
         const map = this.make.tilemap({ key: MAP_CONFIG.key });
         const tileset = map.addTilesetImage(MAP_CONFIG.tilesetName, MAP_CONFIG.tilesetImage);
@@ -19,18 +21,34 @@ export class WorldScene extends Phaser.Scene {
         // Mark wall tiles that carry the custom "collides" property.
         this.wallsLayer.setCollisionByProperty({ collides: true });
 
-        // Resolve spawn position from the Objects layer, falling back to config.
+        // Determine player spawn based on mode.
         let spawnX = MAP_CONFIG.playerSpawn.x;
         let spawnY = MAP_CONFIG.playerSpawn.y;
 
-        const objectsLayer = map.getObjectLayer(MAP_CONFIG.layers.objects);
-        if (objectsLayer) {
-            const spawnObj = objectsLayer.objects.find(
-                obj => obj.name === 'spawn' || obj.type === 'spawn'
-            );
-            if (spawnObj) {
-                spawnX = Math.floor(spawnObj.x / TILE_SIZE);
-                spawnY = Math.floor(spawnObj.y / TILE_SIZE);
+        if (mode === 'load_game') {
+            const raw = localStorage.getItem('rpg_save_v1');
+            if (raw) {
+                try {
+                    const save = JSON.parse(raw);
+                    if (save.version === 1 && save.player) {
+                        spawnX = save.player.x;
+                        spawnY = save.player.y;
+                    }
+                } catch (_) {
+                    // Corrupt save — fall through to default spawn.
+                }
+            }
+        } else {
+            // new_game — resolve spawn from the Objects layer, falling back to config.
+            const objectsLayer = map.getObjectLayer(MAP_CONFIG.layers.objects);
+            if (objectsLayer) {
+                const spawnObj = objectsLayer.objects.find(
+                    obj => obj.name === 'spawn' || obj.type === 'spawn'
+                );
+                if (spawnObj) {
+                    spawnX = Math.floor(spawnObj.x / TILE_SIZE);
+                    spawnY = Math.floor(spawnObj.y / TILE_SIZE);
+                }
             }
         }
 
