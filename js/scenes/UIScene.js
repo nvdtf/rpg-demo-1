@@ -899,7 +899,20 @@ export class UIScene extends Phaser.Scene {
         if (player) {
             const entry = QuestSystem.getQuestEntry(player, this.dialogQuestId);
             if (entry) {
-                // Quest already accepted or completed — skip prompt.
+                if (entry.status === 'active' && QuestSystem.isReadyToComplete(player, this.dialogQuestId)) {
+                    // Quest objective met — turn in for rewards.
+                    const reward = QuestSystem.completeQuest(player, this.dialogQuestId);
+                    if (reward) {
+                        this._showQuestReward(reward, this.dialogQuestId);
+                        // Broadcast updated stats (XP/level may have changed).
+                        this.game.events.emit('player-stats-changed', {
+                            hp: player.hp,
+                            maxHp: player.maxHp,
+                        });
+                        return;
+                    }
+                }
+                // Quest already completed or not yet ready — skip prompt.
                 this._closeDialog('done');
                 return;
             }
@@ -1025,6 +1038,38 @@ export class UIScene extends Phaser.Scene {
         });
 
         this._closeDialog(accepted ? 'quest-accepted' : 'quest-declined');
+    }
+
+    /**
+     * Show quest completion rewards in the dialog box.
+     * Player presses Enter/Space to dismiss.
+     * @param {{ xp: number, gold: number, item: object|null, levelUp: object|null }} reward
+     * @param {string} questId
+     */
+    _showQuestReward(reward, questId) {
+        const def = QuestSystem.getDefinition(questId);
+        const title = def ? def.title : 'Quest';
+
+        // Build reward summary lines.
+        const lines = [`Quest Complete: ${title}!`, ''];
+        if (reward.xp > 0) lines.push(`  +${reward.xp} XP`);
+        if (reward.gold > 0) lines.push(`  +${reward.gold} Gold`);
+        if (reward.item) lines.push(`  +${reward.item.name}`);
+        if (reward.levelUp) lines.push(`  Level Up! → Lv ${reward.levelUp.newLevel}`);
+
+        // Display in the existing dialog box.
+        this.dialogShowingPrompt = false;
+        this.dialogHintText.setVisible(true);
+        this.dialogHintText.setText('Enter / Space to close');
+        this.dialogPromptContainer.setVisible(false);
+        this.dialogNameText.setText(this.dialogNpcName);
+        this.dialogBodyText.setText(lines.join('\n'));
+
+        // Enter/Space closes the dialog.
+        this.keyEnter.removeAllListeners('down');
+        this.keySpace.removeAllListeners('down');
+        this.keyEnter.on('down', () => this._closeDialog('quest-completed'));
+        this.keySpace.on('down', () => this._closeDialog('quest-completed'));
     }
 
     /**

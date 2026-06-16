@@ -274,6 +274,9 @@ export class WorldScene extends Phaser.Scene {
         this.cameras.main.fadeOut(500, 0, 0, 0);
         this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
             this.scene.sleep('WorldScene');
+            const weaponBonus = (this.player.equipped && this.player.equipped.weapon && this.player.equipped.weapon.attackBonus) || 0;
+            const armorBonus = (this.player.equipped && this.player.equipped.armor && this.player.equipped.armor.defenseBonus) || 0;
+
             this.scene.launch('CombatScene', {
                 enemy: {
                     id:        enemy.id,
@@ -286,10 +289,12 @@ export class WorldScene extends Phaser.Scene {
                     lootTable: enemy.lootTable,
                 },
                 player: {
-                    hp:      this.player.hp,
-                    maxHp:   this.player.maxHp,
-                    attack:  this.player.attack,
-                    defense: this.player.defense,
+                    name:      this.player.name || 'Hero',
+                    hp:        this.player.hp,
+                    maxHp:     this.player.maxHp,
+                    attack:    this.player.attack + weaponBonus,
+                    defense:   this.player.defense + armorBonus,
+                    inventory: this.player.inventory || [],
                 },
             });
 
@@ -342,6 +347,11 @@ export class WorldScene extends Phaser.Scene {
 
             if (result.victory && this._combatEnemy) {
                 this._combatEnemy.defeat();
+
+                // Update quest progress for 'defeat' objectives.
+                if (result.enemyId) {
+                    QuestSystem.updateProgress(this.player, 'defeat', result.enemyId);
+                }
 
                 // Award XP and check for level-up.
                 if (result.xpGained) {
