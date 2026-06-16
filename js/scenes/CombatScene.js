@@ -1,6 +1,17 @@
 import CombatSystem, { CombatState } from '../systems/CombatSystem.js';
 import InventorySystem from '../systems/InventorySystem.js';
 
+/**
+ * R100: The combat system MUST provide exactly three fixed actions —
+ * Attack, Defend, and Use Item — with no additional abilities unlocked
+ * through leveling or any other mechanism.
+ */
+const COMBAT_ACTIONS = Object.freeze([
+    Object.freeze({ label: 'Attack', key: '1' }),
+    Object.freeze({ label: 'Defend', key: '2' }),
+    Object.freeze({ label: 'Item',   key: '3' }),
+]);
+
 export class CombatScene extends Phaser.Scene {
     constructor() {
         super('CombatScene');
@@ -139,11 +150,11 @@ export class CombatScene extends Phaser.Scene {
     /* ── Action menu ───────────────────────────────────────────────── */
 
     _createActionMenu(w) {
-        const actions = [
-            { label: 'Attack', key: '1' },
-            { label: 'Defend', key: '2' },
-            { label: 'Item',   key: '3' },
-        ];
+        // R100 enforcement: exactly 3 fixed actions, never more.
+        if (COMBAT_ACTIONS.length !== 3) {
+            throw new Error('R100 violation: combat must have exactly 3 actions');
+        }
+        const actions = COMBAT_ACTIONS;
         const btnW = 160;
         const btnH = 40;
         const gap = 30;
