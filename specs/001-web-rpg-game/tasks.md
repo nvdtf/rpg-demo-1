@@ -130,7 +130,7 @@
 
 - [x] T035 [US5] Create `js/systems/InventorySystem.js`: addItem (with 20-item capacity check and full-inventory notification), removeItem, equipWeapon, equipArmor, unequip, useConsumable (restore HP capped at maxHp), getInventory, getEquipped — item data from `js/data/items.js`
 - [x] T036 [US5] Add inventory screen overlay to `js/scenes/UIScene.js` toggled by I key: scrollable item list showing name/description/type, equip action for weapons/armor, use action for consumables, equipped items highlighted, close on I or Escape
-- [ ] T037 [US5] Integrate loot drops on combat victory: in WorldScene wake handler, roll against enemy `lootTable` drop chances, call `InventorySystem.addItem()` for dropped items, display loot notification
+- [x] T037 [US5] Integrate loot drops on combat victory: in WorldScene wake handler, roll against enemy `lootTable` drop chances, call `InventorySystem.addItem()` for dropped items, display loot notification
 - [ ] T038 [US5] Integrate consumable usage in `js/scenes/CombatScene.js`: "Item" action (key 3) opens consumable sub-list from player inventory, selecting an item calls `InventorySystem.useConsumable()`, updates HP display, consumes player turn
 - [ ] T039 [US5] Update character screen in `js/scenes/UIScene.js` to show equipped weapon name + attackBonus and equipped armor name + defenseBonus, and display total effective attack/defense (base + equipment bonuses)
 
