@@ -784,7 +784,7 @@
       "issue": 67,
       "pr": 68,
       "branch": "task/T035",
-      "status": "in_review",
+      "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
     }
