@@ -3,6 +3,7 @@ import { MAP_CONFIG } from '../data/maps.js';
 import Player from '../entities/Player.js';
 import Enemy from '../entities/Enemy.js';
 import ENEMIES from '../data/enemies.js';
+import LevelSystem from '../systems/LevelSystem.js';
 
 export class WorldScene extends Phaser.Scene {
     constructor() {
@@ -151,8 +152,10 @@ export class WorldScene extends Phaser.Scene {
                 lootTable: enemy.lootTable,
             },
             player: {
-                hp:    this.player.hp,
-                maxHp: this.player.maxHp,
+                hp:      this.player.hp,
+                maxHp:   this.player.maxHp,
+                attack:  this.player.attack,
+                defense: this.player.defense,
             },
         });
 
@@ -191,12 +194,21 @@ export class WorldScene extends Phaser.Scene {
         if (result) {
             if (result.playerHp !== undefined) {
                 this.player.hp = result.playerHp;
-                this.player.emitStats();
             }
 
             if (result.victory && this._combatEnemy) {
                 this._combatEnemy.defeat();
+
+                // Award XP and check for level-up.
+                if (result.xpGained) {
+                    const levelUp = LevelSystem.addXp(this.player, result.xpGained);
+                    if (levelUp) {
+                        this._showLevelUpNotification(levelUp.newLevel);
+                    }
+                }
             }
+
+            this.player.emitStats();
         }
 
         this._combatEnemy = null;
@@ -204,6 +216,32 @@ export class WorldScene extends Phaser.Scene {
         // Brief cooldown so the overlap doesn't re-trigger instantly.
         this.time.delayedCall(300, () => {
             this.inCombat = false;
+        });
+    }
+
+    /**
+     * Display a floating level-up notification above the player.
+     * @param {number} newLevel
+     */
+    _showLevelUpNotification(newLevel) {
+        const x = this.player.sprite.x;
+        const y = this.player.sprite.y - 20;
+
+        const text = this.add.text(x, y, `Level Up! Lv ${newLevel}`, {
+            fontSize: '16px',
+            fontFamily: 'monospace',
+            color: '#ffdd44',
+            stroke: '#000000',
+            strokeThickness: 3,
+        }).setOrigin(0.5).setDepth(1000);
+
+        this.tweens.add({
+            targets: text,
+            y: y - 40,
+            alpha: 0,
+            duration: 2000,
+            ease: 'Power2',
+            onComplete: () => text.destroy(),
         });
     }
 }
