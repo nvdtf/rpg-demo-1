@@ -59,7 +59,12 @@ export default class InventorySystem {
 
         // Capacity check (new distinct entry required).
         if (player.inventory.length >= MAX_CAPACITY) {
-            return { success: false, item: null, reason: 'inventory_full' };
+            return {
+                success: false,
+                item: null,
+                reason: 'inventory_full',
+                message: `Inventory is full (${MAX_CAPACITY}/${MAX_CAPACITY}). Cannot pick up ${template.name}.`,
+            };
         }
 
         const item = Object.assign({}, template, {
