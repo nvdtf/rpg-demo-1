@@ -1,5 +1,5 @@
 {
-  "phase": "DELTA",
+  "phase": "BUILDING",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -975,7 +975,7 @@
       "worker_runs": 1
     }
   },
-  "sessions": 108,
+  "sessions": 112,
   "history": [
     {
       "from": "IDLE",
@@ -1048,6 +1048,18 @@
       "to": "DELTA",
       "at": "2026-06-16T02:45:55.923405Z",
       "note": "delta loop 1/2"
+    },
+    {
+      "from": "DELTA",
+      "to": "ANALYZED",
+      "at": "2026-06-16T02:52:16.056314Z",
+      "note": "delta 1 ratified + analyzed"
+    },
+    {
+      "from": "ANALYZED",
+      "to": "BUILDING",
+      "at": "2026-06-16T02:52:16.096398Z",
+      "note": "dispatch started"
     }
   ]
 }
