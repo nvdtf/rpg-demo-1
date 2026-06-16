@@ -7,6 +7,7 @@
  */
 
 import QuestSystem from '../systems/QuestSystem.js';
+import InventorySystem from '../systems/InventorySystem.js';
 
 export class UIScene extends Phaser.Scene {
     constructor() {
@@ -60,8 +61,33 @@ export class UIScene extends Phaser.Scene {
         this.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
         this.keyQ.on('down', () => this._toggleQuestLog());
 
+        // ── Inventory screen ────────────────────────────────────────
+        this.inventoryVisible = false;
+        this.invContainer = null;
+        this._invIndex = 0;
+        this._invScroll = 0;
+        this._invItems = null;
+
+        this.keyI = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.I);
+        this.keyI.on('down', () => this._toggleInventory());
+
+        // Inventory navigation (permanent listeners, gated on inventoryVisible).
+        this.input.keyboard.on('keydown-UP', () => {
+            if (this.inventoryVisible) this._invNavigate(-1);
+        });
+        this.input.keyboard.on('keydown-DOWN', () => {
+            if (this.inventoryVisible) this._invNavigate(1);
+        });
+        this.input.keyboard.on('keydown-ENTER', () => {
+            if (this.inventoryVisible) this._invPerformAction();
+        });
+        this.input.keyboard.on('keydown-SPACE', () => {
+            if (this.inventoryVisible) this._invPerformAction();
+        });
+
         this.keyEsc.on('down', () => {
-            if (this.questLogVisible) this._hideQuestLog();
+            if (this.inventoryVisible) this._hideInventory();
+            else if (this.questLogVisible) this._hideQuestLog();
             else if (this.charScreenVisible) this._hideCharScreen();
         });
 
@@ -132,6 +158,7 @@ export class UIScene extends Phaser.Scene {
         if (this.charScreenVisible) {
             this._hideCharScreen();
         } else {
+            if (this.inventoryVisible) return;
             this._showCharScreen();
         }
     }
@@ -286,7 +313,7 @@ export class UIScene extends Phaser.Scene {
         if (this.questLogVisible) {
             this._hideQuestLog();
         } else {
-            if (this.dialogActive || this.charScreenVisible) return;
+            if (this.dialogActive || this.charScreenVisible || this.inventoryVisible) return;
             this._showQuestLog();
         }
     }
@@ -467,6 +494,286 @@ export class UIScene extends Phaser.Scene {
             this.questLogContainer = null;
         }
         this.questLogVisible = false;
+    }
+
+    /* ── inventory screen ──────────────────────────────────────────── */
+
+    _toggleInventory() {
+        if (this.inventoryVisible) {
+            this._hideInventory();
+        } else {
+            if (this.dialogActive || this.charScreenVisible || this.questLogVisible) return;
+            this._showInventory();
+        }
+    }
+
+    _showInventory() {
+        const worldScene = this.scene.get('WorldScene');
+        if (!worldScene || !worldScene.player) return;
+        this.inventoryVisible = true;
+        this._buildInventoryPanel();
+    }
+
+    _hideInventory() {
+        if (this.invContainer) {
+            this.invContainer.destroy();
+            this.invContainer = null;
+        }
+        this.inventoryVisible = false;
+        this._invItems = null;
+    }
+
+    /** Move the inventory selection cursor up or down and rebuild. */
+    _invNavigate(dir) {
+        if (!this._invItems || this._invItems.length === 0) return;
+        this._invIndex = Phaser.Math.Clamp(this._invIndex + dir, 0, this._invItems.length - 1);
+        this._buildInventoryPanel();
+    }
+
+    /** Execute equip / unequip / use on the currently selected item. */
+    _invPerformAction() {
+        if (!this._invItems || this._invIndex < 0 || this._invIndex >= this._invItems.length) return;
+
+        const worldScene = this.scene.get('WorldScene');
+        if (!worldScene || !worldScene.player) return;
+        const player = worldScene.player;
+        const entry = this._invItems[this._invIndex];
+
+        if (entry._equipped) {
+            InventorySystem.unequip(player, entry._slot);
+        } else if (entry.type === 'weapon') {
+            InventorySystem.equipWeapon(player, entry.id);
+        } else if (entry.type === 'armor') {
+            InventorySystem.equipArmor(player, entry.id);
+        } else if (entry.type === 'consumable') {
+            const result = InventorySystem.useConsumable(player, entry.id);
+            if (result && result.success) {
+                this.game.events.emit('player-stats-changed', {
+                    hp: player.hp,
+                    maxHp: player.maxHp,
+                });
+            }
+        }
+
+        this._buildInventoryPanel();
+    }
+
+    /**
+     * Build (or rebuild) the inventory panel UI.
+     * Creates a unified list with equipped items first (highlighted),
+     * then bag items. Supports keyboard scrolling and item details.
+     */
+    _buildInventoryPanel() {
+        if (this.invContainer) {
+            this.invContainer.destroy();
+            this.invContainer = null;
+        }
+
+        const worldScene = this.scene.get('WorldScene');
+        if (!worldScene || !worldScene.player) return;
+        const player = worldScene.player;
+
+        // Build unified item list: equipped items first, then bag contents.
+        this._invItems = [];
+        const equipped = InventorySystem.getEquipped(player);
+        if (equipped.weapon) {
+            this._invItems.push(Object.assign({}, equipped.weapon, { _equipped: true, _slot: 'weapon' }));
+        }
+        if (equipped.armor) {
+            this._invItems.push(Object.assign({}, equipped.armor, { _equipped: true, _slot: 'armor' }));
+        }
+        const inventory = InventorySystem.getInventory(player);
+        for (const item of inventory) {
+            this._invItems.push(Object.assign({}, item, { _equipped: false }));
+        }
+
+        const count = this._invItems.length;
+        if (count === 0) {
+            this._invIndex = -1;
+        } else {
+            if (this._invIndex < 0) this._invIndex = 0;
+            if (this._invIndex >= count) this._invIndex = count - 1;
+        }
+
+        // Scrolling — keep selection in view.
+        const maxVisible = 7;
+        if (this._invIndex >= 0) {
+            if (this._invIndex < this._invScroll) this._invScroll = this._invIndex;
+            if (this._invIndex >= this._invScroll + maxVisible) {
+                this._invScroll = this._invIndex - maxVisible + 1;
+            }
+        }
+        this._invScroll = Math.max(0, Math.min(this._invScroll, Math.max(0, count - maxVisible)));
+
+        // Panel dimensions.
+        const cam = this.cameras.main;
+        const cx = cam.width / 2;
+        const cy = cam.height / 2;
+        const panelW = 380;
+        const rowH = 22;
+        const visibleRows = count === 0 ? 1 : Math.min(maxVisible, count);
+        const hasItems = count > 0;
+        const panelH = 110 + visibleRows * rowH + (hasItems ? 48 : 0);
+        const left = -panelW / 2 + 20;
+        const right = panelW / 2 - 20;
+
+        this.invContainer = this.add.container(cx, cy);
+
+        // Background.
+        const bg = this.add.graphics();
+        bg.fillStyle(0x111118, 0.92);
+        bg.fillRoundedRect(-panelW / 2, -panelH / 2, panelW, panelH, 6);
+        bg.lineStyle(2, 0x6666aa, 1);
+        bg.strokeRoundedRect(-panelW / 2, -panelH / 2, panelW, panelH, 6);
+        this.invContainer.add(bg);
+
+        // Styles.
+        const headerStyle = { fontSize: '16px', fontFamily: 'monospace', color: '#ffdd44', stroke: '#000000', strokeThickness: 2 };
+        const capStyle = { fontSize: '12px', fontFamily: 'monospace', color: '#888888' };
+        const emptyStyle = { fontSize: '13px', fontFamily: 'monospace', color: '#666666' };
+        const descStyle = { fontSize: '11px', fontFamily: 'monospace', color: '#aaaaaa', wordWrap: { width: panelW - 48 } };
+        const statStyle = { fontSize: '12px', fontFamily: 'monospace', color: '#66cc66' };
+        const actionStyle = { fontSize: '12px', fontFamily: 'monospace', color: '#ffdd44' };
+        const hintStyle = { fontSize: '11px', fontFamily: 'monospace', color: '#666666' };
+
+        let y = -panelH / 2 + 16;
+
+        // Title + capacity.
+        this.invContainer.add(
+            this.add.text(0, y, 'INVENTORY', headerStyle).setOrigin(0.5, 0)
+        );
+        this.invContainer.add(
+            this.add.text(right, y + 3, `${inventory.length} / 20`, capStyle).setOrigin(1, 0)
+        );
+        y += 30;
+
+        // Divider helper.
+        const addDivider = (yPos) => {
+            const line = this.add.graphics();
+            line.lineStyle(1, 0x444466, 0.6);
+            line.beginPath();
+            line.moveTo(-panelW / 2 + 16, yPos);
+            line.lineTo(panelW / 2 - 16, yPos);
+            line.strokePath();
+            this.invContainer.add(line);
+        };
+
+        addDivider(y);
+        y += 8;
+
+        // Item list.
+        if (count === 0) {
+            this.invContainer.add(
+                this.add.text(0, y + 2, 'No items.', emptyStyle).setOrigin(0.5, 0)
+            );
+            y += rowH;
+        } else {
+            // Scroll-up indicator.
+            if (this._invScroll > 0) {
+                this.invContainer.add(
+                    this.add.text(0, y - 2, '▲', { fontSize: '9px', fontFamily: 'monospace', color: '#555555' }).setOrigin(0.5, 0)
+                );
+            }
+
+            for (let v = 0; v < visibleRows; v++) {
+                const idx = this._invScroll + v;
+                if (idx >= count) break;
+                const item = this._invItems[idx];
+                const isSel = idx === this._invIndex;
+                const isEq = item._equipped;
+
+                // Selection highlight background.
+                if (isSel) {
+                    const hl = this.add.graphics();
+                    hl.fillStyle(0x334466, 0.7);
+                    hl.fillRoundedRect(left - 6, y - 1, panelW - 28, rowH, 3);
+                    this.invContainer.add(hl);
+                }
+
+                // Item name with equipped marker and quantity.
+                const prefix = isEq ? '[E] ' : '    ';
+                let label = prefix + item.name;
+                if (item.type === 'consumable' && item.quantity > 1) {
+                    label += ` x${item.quantity}`;
+                }
+                const nameColor = isEq ? '#ffdd44' : (isSel ? '#ffffff' : '#bbbbbb');
+                this.invContainer.add(
+                    this.add.text(left, y + 2, label, {
+                        fontSize: '13px', fontFamily: 'monospace', color: nameColor,
+                    })
+                );
+
+                // Type tag on the right.
+                const typeLabel = item.type.charAt(0).toUpperCase() + item.type.slice(1);
+                this.invContainer.add(
+                    this.add.text(right, y + 3, typeLabel, {
+                        fontSize: '11px', fontFamily: 'monospace', color: '#666666',
+                    }).setOrigin(1, 0)
+                );
+
+                y += rowH;
+            }
+
+            // Scroll-down indicator.
+            if (this._invScroll + maxVisible < count) {
+                this.invContainer.add(
+                    this.add.text(0, y - 2, '▼', { fontSize: '9px', fontFamily: 'monospace', color: '#555555' }).setOrigin(0.5, 0)
+                );
+            }
+        }
+
+        y += 4;
+        addDivider(y);
+        y += 8;
+
+        // Detail section for selected item.
+        if (hasItems && this._invIndex >= 0 && this._invIndex < count) {
+            const sel = this._invItems[this._invIndex];
+
+            // Description.
+            this.invContainer.add(
+                this.add.text(left, y, sel.description || '', descStyle)
+            );
+            y += 20;
+
+            // Stats.
+            const stats = [];
+            if (sel.attackBonus) stats.push(`ATK +${sel.attackBonus}`);
+            if (sel.defenseBonus) stats.push(`DEF +${sel.defenseBonus}`);
+            if (sel.healAmount) stats.push(`Heal ${sel.healAmount} HP`);
+            if (stats.length > 0) {
+                this.invContainer.add(
+                    this.add.text(left, y, stats.join('  '), statStyle)
+                );
+            }
+
+            // Action label.
+            let actionLabel = '';
+            if (sel._equipped) {
+                actionLabel = '[ Unequip ]';
+            } else if (sel.type === 'weapon' || sel.type === 'armor') {
+                actionLabel = '[ Equip ]';
+            } else if (sel.type === 'consumable') {
+                actionLabel = '[ Use ]';
+            }
+            if (actionLabel) {
+                this.invContainer.add(
+                    this.add.text(right, y, actionLabel, actionStyle).setOrigin(1, 0)
+                );
+            }
+            y += 20;
+        }
+
+        addDivider(y);
+        y += 6;
+
+        // Hints.
+        const hintText = hasItems
+            ? '↑↓ Navigate · Enter Action · I / Esc Close'
+            : 'I / Esc to close';
+        this.invContainer.add(
+            this.add.text(0, y, hintText, hintStyle).setOrigin(0.5, 0)
+        );
     }
 
     /* ── dialog box ────────────────────────────────────────────────── */
@@ -761,6 +1068,7 @@ export class UIScene extends Phaser.Scene {
         this.game.events.off('show-dialog', this._onShowDialog, this);
         this._hideCharScreen();
         this._hideQuestLog();
+        this._hideInventory();
         if (this.dialogActive) this._closeDialog('done');
     }
 }
