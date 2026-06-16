@@ -23,6 +23,10 @@ export class CombatScene extends Phaser.Scene {
         this._createMessageArea(width);
         this._createActionMenu(width);
         this._setupInput();
+
+        // Fade in from black when entering combat (FR-017).
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+
         this._showIntro();
     }
 
@@ -316,13 +320,17 @@ export class CombatScene extends Phaser.Scene {
         this.messageText.setText(`Victory! Gained ${result.xpReward} XP!`);
 
         this.time.delayedCall(2000, () => {
-            this.events.emit('combat-end', {
-                victory: true,
-                playerHp: result.playerHp,
-                xpGained: result.xpReward,
-                lootGained: this._rollLoot(result.lootTable),
-                enemyId: this.combatData.enemy.id,
-                consumablesUsed: this.consumablesUsed,
+            // Fade out before returning to world (FR-017).
+            this.cameras.main.fadeOut(500, 0, 0, 0);
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+                this.events.emit('combat-end', {
+                    victory: true,
+                    playerHp: result.playerHp,
+                    xpGained: result.xpReward,
+                    lootGained: this._rollLoot(result.lootTable),
+                    enemyId: this.combatData.enemy.id,
+                    consumablesUsed: this.consumablesUsed,
+                });
             });
         });
     }
@@ -338,13 +346,17 @@ export class CombatScene extends Phaser.Scene {
         this.messageText.setText('You have been defeated\u2026');
 
         this.time.delayedCall(2000, () => {
-            this.events.emit('combat-end', {
-                victory: false,
-                playerHp: 0,
-                xpGained: 0,
-                lootGained: [],
-                enemyId: this.combatData.enemy.id,
-                consumablesUsed: this.consumablesUsed,
+            // Fade out before transitioning to game over (FR-017).
+            this.cameras.main.fadeOut(500, 0, 0, 0);
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+                this.events.emit('combat-end', {
+                    victory: false,
+                    playerHp: 0,
+                    xpGained: 0,
+                    lootGained: [],
+                    enemyId: this.combatData.enemy.id,
+                    consumablesUsed: this.consumablesUsed,
+                });
             });
         });
     }

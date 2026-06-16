@@ -268,28 +268,32 @@ export class WorldScene extends Phaser.Scene {
         this.inCombat = true;
         this._combatEnemy = enemy;
 
-        this.scene.sleep('WorldScene');
-        this.scene.launch('CombatScene', {
-            enemy: {
-                id:        enemy.id,
-                name:      enemy.name,
-                hp:        enemy.hp,
-                maxHp:     enemy.maxHp,
-                attack:    enemy.attack,
-                defense:   enemy.defense,
-                xpReward:  enemy.xpReward,
-                lootTable: enemy.lootTable,
-            },
-            player: {
-                hp:      this.player.hp,
-                maxHp:   this.player.maxHp,
-                attack:  this.player.attack,
-                defense: this.player.defense,
-            },
-        });
+        // Fade out before transitioning to combat (FR-017).
+        this.cameras.main.fadeOut(500, 0, 0, 0);
+        this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, () => {
+            this.scene.sleep('WorldScene');
+            this.scene.launch('CombatScene', {
+                enemy: {
+                    id:        enemy.id,
+                    name:      enemy.name,
+                    hp:        enemy.hp,
+                    maxHp:     enemy.maxHp,
+                    attack:    enemy.attack,
+                    defense:   enemy.defense,
+                    xpReward:  enemy.xpReward,
+                    lootTable: enemy.lootTable,
+                },
+                player: {
+                    hp:      this.player.hp,
+                    maxHp:   this.player.maxHp,
+                    attack:  this.player.attack,
+                    defense: this.player.defense,
+                },
+            });
 
-        this.scene.get('CombatScene').events.once('combat-end', (result) => {
-            this._onCombatEnd(result);
+            this.scene.get('CombatScene').events.once('combat-end', (result) => {
+                this._onCombatEnd(result);
+            });
         });
     }
 
@@ -317,6 +321,9 @@ export class WorldScene extends Phaser.Scene {
      * Applies combat results: update HP, mark enemy defeated, remove sprite.
      */
     _onWake() {
+        // Fade in when returning from combat (FR-017).
+        this.cameras.main.fadeIn(500, 0, 0, 0);
+
         const result = this._pendingCombatResult;
         this._pendingCombatResult = null;
 
