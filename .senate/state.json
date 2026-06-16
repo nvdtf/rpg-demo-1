@@ -613,7 +613,7 @@
       "issue": 29,
       "pr": 30,
       "branch": "task/T014",
-      "status": "in_review",
+      "status": "merged",
       "review_cycles": 1,
       "worker_runs": 2
     }
