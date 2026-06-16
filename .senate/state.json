@@ -1,9 +1,1109 @@
 {
-  "phase": "IDLE",
+  "phase": "BUILDING",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
   "speckit_version": "v0.10.1",
-  "delta_loops": 0,
-  "sessions": 3
+  "idea": "build a web based rpg game",
+  "idea_issue": 1,
+  "feature_branch": "001-web-rpg-game",
+  "feature_dir": "specs/001-web-rpg-game",
+  "feature_pr": 2,
+  "questionnaire_issue": 3,
+  "dimensions": [
+    {
+      "id": "D1",
+      "title": "Rendering Engine / Framework",
+      "stakes": "HIGH",
+      "options": [
+        {
+          "key": "a",
+          "label": "Phaser 3 (full game framework)"
+        },
+        {
+          "key": "b",
+          "label": "Raw HTML5 Canvas (manual engine)"
+        },
+        {
+          "key": "c",
+          "label": "DOM + CSS Grid (no canvas)"
+        }
+      ],
+      "recommendation": "a",
+      "cost_note": "Option c severely limits animation and camera; option b is ~3x implementation effort vs option a",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D2",
+      "title": "Combat Scene Presentation",
+      "stakes": "MED",
+      "options": [
+        {
+          "key": "a",
+          "label": "Separate full-screen side-view scene (FF/DQ style)"
+        },
+        {
+          "key": "b",
+          "label": "Overlay panel on exploration map (in-place combat)"
+        },
+        {
+          "key": "c",
+          "label": "First-person enemy view (player not visible)"
+        }
+      ],
+      "recommendation": "a",
+      "cost_note": "",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D3",
+      "title": "Ability Unlock on Level-Up",
+      "stakes": "HIGH",
+      "options": [
+        {
+          "key": "a",
+          "label": "Stats only — fixed 3 actions (Attack/Defend/Use Item)"
+        },
+        {
+          "key": "b",
+          "label": "Unlock 1–2 extra combat abilities via leveling"
+        },
+        {
+          "key": "c",
+          "label": "Skill tree with 4+ unlockable abilities"
+        }
+      ],
+      "recommendation": "a",
+      "cost_note": "Option c is ~5x the combat UI and balancing scope of option a",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D4",
+      "title": "World Map Size",
+      "stakes": "MED",
+      "options": [
+        {
+          "key": "a",
+          "label": "Small (~50x50 tiles, tight and focused)"
+        },
+        {
+          "key": "b",
+          "label": "Medium (~75x75 tiles, village + wilderness + dungeon)"
+        },
+        {
+          "key": "c",
+          "label": "Large (~100x100 tiles, expansive)"
+        }
+      ],
+      "recommendation": "b",
+      "cost_note": "Option c without proportional content investment produces a barren world",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D5",
+      "title": "Enemy Encounter Model",
+      "stakes": "MED",
+      "options": [
+        {
+          "key": "a",
+          "label": "Visible enemy sprites on map (Chrono Trigger style)"
+        },
+        {
+          "key": "b",
+          "label": "Random encounters on certain tiles (early FF style)"
+        }
+      ],
+      "recommendation": "a",
+      "cost_note": "Option a requires enemy patrol AI and per-enemy overworld sprites",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D6",
+      "title": "Deployment Target",
+      "stakes": "MED",
+      "options": [
+        {
+          "key": "a",
+          "label": "GitHub Pages (static, auto-deploy from repo)"
+        },
+        {
+          "key": "b",
+          "label": "Single index.html bundle (open from filesystem)"
+        },
+        {
+          "key": "c",
+          "label": "Server-hosted (Vite/Express static)"
+        }
+      ],
+      "recommendation": "a",
+      "cost_note": "Option b may hit CORS issues loading assets from file://",
+      "defer_to_probe": false
+    },
+    {
+      "id": "D7",
+      "title": "Visual Style \u0026 Pixel Density",
+      "stakes": "LOW",
+      "options": [
+        {
+          "key": "a",
+          "label": "16x16 tiles, Game Boy palette (ultra-retro)"
+        },
+        {
+          "key": "b",
+          "label": "16x16 tiles, SNES-era full color (nostalgic)"
+        },
+        {
+          "key": "c",
+          "label": "32x32 tiles, modern indie pixel art (higher fidelity)"
+        }
+      ],
+      "recommendation": "b",
+      "cost_note": "",
+      "defer_to_probe": true
+    },
+    {
+      "id": "D8",
+      "title": "HUD Density During Exploration",
+      "stakes": "LOW",
+      "options": [
+        {
+          "key": "a",
+          "label": "Minimal — no persistent HUD, stats via menu only"
+        },
+        {
+          "key": "b",
+          "label": "Light — small health bar in corner only"
+        },
+        {
+          "key": "c",
+          "label": "Full — health bar, minimap, quest tracker, hotkey hints"
+        }
+      ],
+      "recommendation": "b",
+      "cost_note": "",
+      "defer_to_probe": true
+    }
+  ],
+  "dim_tallies": [
+    {
+      "dimension": "D1",
+      "title": "Rendering Engine / Framework",
+      "stakes": "HIGH",
+      "winner": "a",
+      "winner_label": "Phaser 3 (full game framework)",
+      "weighted_pct": 70,
+      "status": "decided",
+      "by_choice": {
+        "a": 70,
+        "b": 30
+      },
+      "votes": {
+        "nvdtf": "a",
+        "questmaster": "a",
+        "scopekeeper": "a",
+        "tehranifar": "b"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "human"
+      }
+    },
+    {
+      "dimension": "D2",
+      "title": "Combat Scene Presentation",
+      "stakes": "MED",
+      "winner": "a",
+      "winner_label": "Separate full-screen side-view scene (FF/DQ style)",
+      "weighted_pct": 100,
+      "status": "decided",
+      "by_choice": {
+        "a": 100
+      },
+      "votes": {
+        "nvdtf": "a",
+        "questmaster": "a",
+        "scopekeeper": "a",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "recommendation"
+      }
+    },
+    {
+      "dimension": "D3",
+      "title": "Ability Unlock on Level-Up",
+      "stakes": "HIGH",
+      "winner": "a",
+      "winner_label": "Stats only — fixed 3 actions (Attack/Defend/Use Item)",
+      "weighted_pct": 70,
+      "status": "decided",
+      "by_choice": {
+        "a": 70,
+        "c": 30
+      },
+      "votes": {
+        "nvdtf": "c",
+        "questmaster": "a",
+        "scopekeeper": "a",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "recommendation",
+        "scopekeeper": "recommendation",
+        "tehranifar": "human"
+      }
+    },
+    {
+      "dimension": "D4",
+      "title": "World Map Size",
+      "stakes": "MED",
+      "winner": "a",
+      "winner_label": "Small (~50x50 tiles, tight and focused)",
+      "weighted_pct": 70,
+      "status": "decided",
+      "by_choice": {
+        "a": 70,
+        "c": 30
+      },
+      "votes": {
+        "nvdtf": "c",
+        "questmaster": "a",
+        "scopekeeper": "a",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "human"
+      }
+    },
+    {
+      "dimension": "D5",
+      "title": "Enemy Encounter Model",
+      "stakes": "MED",
+      "winner": "a",
+      "winner_label": "Visible enemy sprites on map (Chrono Trigger style)",
+      "weighted_pct": 80,
+      "status": "decided",
+      "by_choice": {
+        "a": 80,
+        "b": 20
+      },
+      "votes": {
+        "nvdtf": "a",
+        "questmaster": "a",
+        "scopekeeper": "b",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "recommendation"
+      }
+    },
+    {
+      "dimension": "D6",
+      "title": "Deployment Target",
+      "stakes": "MED",
+      "winner": "a",
+      "winner_label": "GitHub Pages (static, auto-deploy from repo)",
+      "weighted_pct": 100,
+      "status": "decided",
+      "by_choice": {
+        "a": 100
+      },
+      "votes": {
+        "nvdtf": "a",
+        "questmaster": "a",
+        "scopekeeper": "a",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "recommendation"
+      }
+    },
+    {
+      "dimension": "D7",
+      "title": "Visual Style \u0026 Pixel Density",
+      "stakes": "LOW",
+      "winner": "a",
+      "winner_label": "16x16 tiles, Game Boy palette (ultra-retro)",
+      "weighted_pct": 50,
+      "status": "conflict",
+      "by_choice": {
+        "a": 50,
+        "b": 50
+      },
+      "votes": {
+        "nvdtf": "b",
+        "questmaster": "a",
+        "scopekeeper": "b",
+        "tehranifar": "a"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "human"
+      }
+    },
+    {
+      "dimension": "D8",
+      "title": "HUD Density During Exploration",
+      "stakes": "LOW",
+      "winner": "b",
+      "winner_label": "Light — small health bar in corner only",
+      "weighted_pct": 70,
+      "status": "decided",
+      "by_choice": {
+        "b": 70,
+        "c": 30
+      },
+      "votes": {
+        "nvdtf": "c",
+        "questmaster": "b",
+        "scopekeeper": "b",
+        "tehranifar": "b"
+      },
+      "sources": {
+        "nvdtf": "human",
+        "questmaster": "proxy",
+        "scopekeeper": "proxy",
+        "tehranifar": "human"
+      }
+    }
+  ],
+  "aggregate": {
+    "results": [
+      {
+        "dimension": "D1",
+        "winner": "a",
+        "weighted_pct": 70,
+        "status": "decided"
+      },
+      {
+        "dimension": "D2",
+        "winner": "a",
+        "weighted_pct": 100,
+        "status": "decided"
+      },
+      {
+        "dimension": "D3",
+        "winner": "a",
+        "weighted_pct": 50,
+        "status": "conflict"
+      },
+      {
+        "dimension": "D4",
+        "winner": "a",
+        "weighted_pct": 50,
+        "status": "conflict"
+      },
+      {
+        "dimension": "D5",
+        "winner": "a",
+        "weighted_pct": 80,
+        "status": "decided"
+      },
+      {
+        "dimension": "D6",
+        "winner": "a",
+        "weighted_pct": 100,
+        "status": "decided"
+      },
+      {
+        "dimension": "D7",
+        "winner": "b",
+        "weighted_pct": 100,
+        "status": "deferred"
+      },
+      {
+        "dimension": "D8",
+        "winner": "b",
+        "weighted_pct": 80,
+        "status": "deferred"
+      }
+    ],
+    "clarifications": [
+      {
+        "question": "Rendering Engine / Framework",
+        "answer": "Phaser 3 (full game framework)",
+        "weighted_pct": 70,
+        "provenance": "D1"
+      },
+      {
+        "question": "Combat Scene Presentation",
+        "answer": "Separate full-screen side-view scene (FF/DQ style)",
+        "weighted_pct": 100,
+        "provenance": "D2"
+      },
+      {
+        "question": "Enemy Encounter Model",
+        "answer": "Visible enemy sprites on map (Chrono Trigger style)",
+        "weighted_pct": 80,
+        "provenance": "D5"
+      },
+      {
+        "question": "Deployment Target",
+        "answer": "GitHub Pages (static, auto-deploy from repo)",
+        "weighted_pct": 100,
+        "provenance": "D6"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "FR-016",
+        "text": "The game MUST be built using the Phaser 3 framework as the rendering engine, physics provider, and game-loop manager.",
+        "provenance": "decided: 70% weighted (D1)"
+      },
+      {
+        "id": "FR-017",
+        "text": "Combat encounters MUST be presented in a separate full-screen side-view scene (Final Fantasy / Dragon Quest style), visually distinct from the exploration map, with a transition effect between scenes.",
+        "provenance": "decided: 100% weighted (D2)"
+      },
+      {
+        "id": "FR-018",
+        "text": "Enemies MUST appear as visible sprites on the exploration map (Chrono Trigger style); combat is initiated when the player character makes contact with an enemy sprite. There are no random/invisible encounters.",
+        "provenance": "decided: 80% weighted (D5)"
+      },
+      {
+        "id": "FR-019",
+        "text": "The game MUST be deployable as a static site to GitHub Pages with automated deployment configured from the repository (no server-side runtime required).",
+        "provenance": "decided: 100% weighted (D6)"
+      }
+    ],
+    "deferred": [
+      "D3",
+      "D4",
+      "D7",
+      "D8"
+    ]
+  },
+  "feedback_issue": 95,
+  "probe_url": "https://nvdtf.github.io/rpg-demo-1/",
+  "delta_loops": 1,
+  "delta_aggregate": {
+    "results": [
+      {
+        "dimension": "D3",
+        "winner": "a",
+        "weighted_pct": 70,
+        "status": "decided"
+      },
+      {
+        "dimension": "D4",
+        "winner": "a",
+        "weighted_pct": 70,
+        "status": "decided"
+      },
+      {
+        "dimension": "D7",
+        "winner": "a",
+        "weighted_pct": 50,
+        "status": "conflict"
+      },
+      {
+        "dimension": "D8",
+        "winner": "b",
+        "weighted_pct": 70,
+        "status": "decided"
+      }
+    ],
+    "clarifications": [
+      {
+        "question": "Ability Unlock on Level-Up",
+        "answer": "Stats only — fixed 3 actions (Attack/Defend/Use Item) (70% weighted)",
+        "weighted_pct": 70,
+        "provenance": "D3"
+      },
+      {
+        "question": "World Map Size",
+        "answer": "Small (~50x50 tiles, tight and focused) (70% weighted)",
+        "weighted_pct": 70,
+        "provenance": "D4"
+      },
+      {
+        "question": "HUD Density During Exploration",
+        "answer": "Light — small health bar in corner only (70% weighted)",
+        "weighted_pct": 70,
+        "provenance": "D8"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "R100",
+        "text": "Level-ups MUST increase stats only (health, attack, defense); the combat system MUST provide exactly three fixed actions — Attack, Defend, and Use Item — with no additional abilities unlocked through leveling.",
+        "provenance": "probe: 70% weighted (D3)"
+      },
+      {
+        "id": "R101",
+        "text": "The game world MUST use a small map of approximately 50×50 tiles, tightly focused with minimal empty space.",
+        "provenance": "probe: 70% weighted (D4)"
+      },
+      {
+        "id": "R102",
+        "text": "During exploration, the HUD MUST display only a small health bar in one corner of the screen; all other player information (stats, inventory, quests) MUST be accessible only through menu screens.",
+        "provenance": "probe: 70% weighted (D8)"
+      }
+    ],
+    "deferred": [
+      "D7"
+    ]
+  },
+  "tasks": {
+    "T001": {
+      "id": "T001",
+      "issue": 5,
+      "pr": 6,
+      "branch": "task/T001",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T002": {
+      "id": "T002",
+      "issue": 7,
+      "pr": 8,
+      "branch": "task/T002",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T003": {
+      "id": "T003",
+      "issue": 9,
+      "pr": 11,
+      "branch": "task/T003",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T004": {
+      "id": "T004",
+      "issue": 10,
+      "pr": 12,
+      "branch": "task/T004",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T005": {
+      "id": "T005",
+      "issue": 13,
+      "branch": "task/T005",
+      "status": "pending",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T006": {
+      "id": "T006",
+      "issue": 14,
+      "pr": 15,
+      "branch": "task/T006",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T007": {
+      "id": "T007",
+      "issue": 16,
+      "pr": 17,
+      "branch": "task/T007",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T008": {
+      "id": "T008",
+      "issue": 18,
+      "pr": 19,
+      "branch": "task/T008",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T009": {
+      "id": "T009",
+      "issue": 20,
+      "branch": "task/T009",
+      "status": "pending",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T010": {
+      "id": "T010",
+      "issue": 21,
+      "pr": 22,
+      "branch": "task/T010",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T011": {
+      "id": "T011",
+      "issue": 23,
+      "pr": 24,
+      "branch": "task/T011",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T012": {
+      "id": "T012",
+      "issue": 25,
+      "pr": 26,
+      "branch": "task/T012",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T013": {
+      "id": "T013",
+      "issue": 27,
+      "pr": 28,
+      "branch": "task/T013",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T014": {
+      "id": "T014",
+      "issue": 29,
+      "pr": 30,
+      "branch": "task/T014",
+      "status": "merged",
+      "review_cycles": 1,
+      "worker_runs": 2
+    },
+    "T015": {
+      "id": "T015",
+      "issue": 31,
+      "pr": 32,
+      "branch": "task/T015",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T016": {
+      "id": "T016",
+      "issue": 33,
+      "pr": 34,
+      "branch": "task/T016",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T018": {
+      "id": "T018",
+      "issue": 35,
+      "pr": 36,
+      "branch": "task/T018",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T019": {
+      "id": "T019",
+      "issue": 37,
+      "pr": 38,
+      "branch": "task/T019",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T020": {
+      "id": "T020",
+      "issue": 39,
+      "pr": 40,
+      "branch": "task/T020",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T021": {
+      "id": "T021",
+      "issue": 41,
+      "pr": 42,
+      "branch": "task/T021",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T022": {
+      "id": "T022",
+      "issue": 43,
+      "pr": 44,
+      "branch": "task/T022",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T023": {
+      "id": "T023",
+      "issue": 45,
+      "pr": 46,
+      "branch": "task/T023",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T024": {
+      "id": "T024",
+      "issue": 47,
+      "pr": 48,
+      "branch": "task/T024",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T025": {
+      "id": "T025",
+      "issue": 49,
+      "pr": 50,
+      "branch": "task/T025",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T026": {
+      "id": "T026",
+      "issue": 51,
+      "pr": 52,
+      "branch": "task/T026",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T027": {
+      "id": "T027",
+      "issue": 53,
+      "pr": 54,
+      "branch": "task/T027",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T028": {
+      "id": "T028",
+      "issue": 55,
+      "pr": 56,
+      "branch": "task/T028",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T030": {
+      "id": "T030",
+      "issue": 57,
+      "pr": 58,
+      "branch": "task/T030",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T031": {
+      "id": "T031",
+      "issue": 59,
+      "pr": 60,
+      "branch": "task/T031",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T032": {
+      "id": "T032",
+      "issue": 61,
+      "pr": 62,
+      "branch": "task/T032",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T033": {
+      "id": "T033",
+      "issue": 63,
+      "pr": 64,
+      "branch": "task/T033",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T034": {
+      "id": "T034",
+      "issue": 65,
+      "pr": 66,
+      "branch": "task/T034",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T035": {
+      "id": "T035",
+      "issue": 67,
+      "pr": 68,
+      "branch": "task/T035",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T036": {
+      "id": "T036",
+      "issue": 69,
+      "pr": 70,
+      "branch": "task/T036",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T037": {
+      "id": "T037",
+      "issue": 71,
+      "pr": 72,
+      "branch": "task/T037",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T038": {
+      "id": "T038",
+      "issue": 73,
+      "pr": 74,
+      "branch": "task/T038",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T039": {
+      "id": "T039",
+      "issue": 75,
+      "pr": 76,
+      "branch": "task/T039",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T040": {
+      "id": "T040",
+      "issue": 77,
+      "pr": 78,
+      "branch": "task/T040",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T041": {
+      "id": "T041",
+      "issue": 79,
+      "pr": 80,
+      "branch": "task/T041",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T042": {
+      "id": "T042",
+      "issue": 81,
+      "pr": 82,
+      "branch": "task/T042",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T043": {
+      "id": "T043",
+      "issue": 83,
+      "pr": 84,
+      "branch": "task/T043",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T044": {
+      "id": "T044",
+      "issue": 85,
+      "pr": 86,
+      "branch": "task/T044",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T045": {
+      "id": "T045",
+      "issue": 87,
+      "pr": 88,
+      "branch": "task/T045",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T046": {
+      "id": "T046",
+      "issue": 89,
+      "pr": 90,
+      "branch": "task/T046",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T047": {
+      "id": "T047",
+      "issue": 91,
+      "pr": 92,
+      "branch": "task/T047",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T048": {
+      "id": "T048",
+      "issue": 93,
+      "pr": 94,
+      "branch": "task/T048",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T049": {
+      "id": "T049",
+      "issue": 96,
+      "pr": 98,
+      "branch": "task/T049",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T050": {
+      "id": "T050",
+      "issue": 97,
+      "pr": 99,
+      "branch": "task/T050",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T051": {
+      "id": "T051",
+      "issue": 100,
+      "branch": "task/T051",
+      "status": "pending",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T052": {
+      "id": "T052",
+      "issue": 101,
+      "pr": 102,
+      "branch": "task/T052",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    },
+    "T053": {
+      "id": "T053",
+      "issue": 103,
+      "pr": 104,
+      "branch": "task/T053",
+      "status": "merged",
+      "review_cycles": 0,
+      "worker_runs": 1
+    }
+  },
+  "sessions": 121,
+  "history": [
+    {
+      "from": "IDLE",
+      "to": "IDEA",
+      "at": "2026-06-15T19:56:03.985358Z",
+      "note": "idea issue #1"
+    },
+    {
+      "from": "IDEA",
+      "to": "INTERROGATED",
+      "at": "2026-06-15T19:59:53.377159Z",
+      "note": "questionnaire #3 (8 dims), feature PR #2"
+    },
+    {
+      "from": "INTERROGATED",
+      "to": "VOTED",
+      "at": "2026-06-15T21:47:13.188016Z",
+      "note": "8 dims tallied, deferred: D3,D4,D7,D8"
+    },
+    {
+      "from": "VOTED",
+      "to": "SPEC_PATCHED",
+      "at": "2026-06-15T21:48:14.377063Z",
+      "note": "4 clarifications, 4 requirements, deferred: D3,D4,D7,D8"
+    },
+    {
+      "from": "SPEC_PATCHED",
+      "to": "RATIFIED",
+      "at": "2026-06-15T22:42:36.609251Z",
+      "note": "PR #2 labeled ratified"
+    },
+    {
+      "from": "RATIFIED",
+      "to": "PLANNED",
+      "at": "2026-06-15T22:56:43.611448Z",
+      "note": "plan + tasks generated"
+    },
+    {
+      "from": "PLANNED",
+      "to": "ANALYZED",
+      "at": "2026-06-15T22:59:45.203048Z",
+      "note": "analyze passed"
+    },
+    {
+      "from": "ANALYZED",
+      "to": "BUILDING",
+      "at": "2026-06-15T23:00:02.072934Z",
+      "note": "dispatch started"
+    },
+    {
+      "from": "BUILDING",
+      "to": "BUILT",
+      "at": "2026-06-16T02:24:25.269274Z",
+      "note": "all tasks merged"
+    },
+    {
+      "from": "BUILT",
+      "to": "PROBE_LIVE",
+      "at": "2026-06-16T02:24:57.393975Z",
+      "note": "probe live at https://nvdtf.github.io/rpg-demo-1/, feedback issue #95"
+    },
+    {
+      "from": "PROBE_LIVE",
+      "to": "FEEDBACK",
+      "at": "2026-06-16T02:44:38.321288Z",
+      "note": "round 1: 3 delta requirements"
+    },
+    {
+      "from": "FEEDBACK",
+      "to": "DELTA",
+      "at": "2026-06-16T02:45:55.923405Z",
+      "note": "delta loop 1/2"
+    },
+    {
+      "from": "DELTA",
+      "to": "ANALYZED",
+      "at": "2026-06-16T02:52:16.056314Z",
+      "note": "delta 1 ratified + analyzed"
+    },
+    {
+      "from": "ANALYZED",
+      "to": "BUILDING",
+      "at": "2026-06-16T02:52:16.096398Z",
+      "note": "dispatch started"
+    }
+  ]
 }
