@@ -1,5 +1,5 @@
 {
-  "phase": "PROBE_LIVE",
+  "phase": "FEEDBACK",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -240,23 +240,22 @@
       "stakes": "HIGH",
       "winner": "a",
       "winner_label": "Stats only — fixed 3 actions (Attack/Defend/Use Item)",
-      "weighted_pct": 50,
-      "status": "conflict",
+      "weighted_pct": 70,
+      "status": "decided",
       "by_choice": {
-        "a": 50,
-        "b": 30,
-        "c": 20
+        "a": 70,
+        "c": 30
       },
       "votes": {
-        "nvdtf": "b",
-        "questmaster": "c",
+        "nvdtf": "c",
+        "questmaster": "a",
         "scopekeeper": "a",
         "tehranifar": "a"
       },
       "sources": {
         "nvdtf": "human",
-        "questmaster": "proxy",
-        "scopekeeper": "proxy",
+        "questmaster": "recommendation",
+        "scopekeeper": "recommendation",
         "tehranifar": "human"
       }
     },
@@ -266,16 +265,15 @@
       "stakes": "MED",
       "winner": "a",
       "winner_label": "Small (~50x50 tiles, tight and focused)",
-      "weighted_pct": 50,
-      "status": "conflict",
+      "weighted_pct": 70,
+      "status": "decided",
       "by_choice": {
-        "a": 50,
-        "b": 20,
+        "a": 70,
         "c": 30
       },
       "votes": {
         "nvdtf": "c",
-        "questmaster": "b",
+        "questmaster": "a",
         "scopekeeper": "a",
         "tehranifar": "a"
       },
@@ -339,24 +337,25 @@
       "dimension": "D7",
       "title": "Visual Style \u0026 Pixel Density",
       "stakes": "LOW",
-      "winner": "b",
-      "winner_label": "16x16 tiles, SNES-era full color (nostalgic)",
-      "weighted_pct": 100,
-      "status": "deferred",
+      "winner": "a",
+      "winner_label": "16x16 tiles, Game Boy palette (ultra-retro)",
+      "weighted_pct": 50,
+      "status": "conflict",
       "by_choice": {
-        "b": 100
+        "a": 50,
+        "b": 50
       },
       "votes": {
         "nvdtf": "b",
-        "questmaster": "b",
+        "questmaster": "a",
         "scopekeeper": "b",
-        "tehranifar": "b"
+        "tehranifar": "a"
       },
       "sources": {
-        "nvdtf": "recommendation",
+        "nvdtf": "human",
         "questmaster": "proxy",
         "scopekeeper": "proxy",
-        "tehranifar": "recommendation"
+        "tehranifar": "human"
       }
     },
     {
@@ -365,23 +364,23 @@
       "stakes": "LOW",
       "winner": "b",
       "winner_label": "Light — small health bar in corner only",
-      "weighted_pct": 80,
-      "status": "deferred",
+      "weighted_pct": 70,
+      "status": "decided",
       "by_choice": {
-        "b": 80,
-        "c": 20
+        "b": 70,
+        "c": 30
       },
       "votes": {
-        "nvdtf": "b",
-        "questmaster": "c",
+        "nvdtf": "c",
+        "questmaster": "b",
         "scopekeeper": "b",
         "tehranifar": "b"
       },
       "sources": {
-        "nvdtf": "recommendation",
+        "nvdtf": "human",
         "questmaster": "proxy",
         "scopekeeper": "proxy",
-        "tehranifar": "recommendation"
+        "tehranifar": "human"
       }
     }
   ],
@@ -494,6 +493,74 @@
   "feedback_issue": 95,
   "probe_url": "https://nvdtf.github.io/rpg-demo-1/",
   "delta_loops": 0,
+  "delta_aggregate": {
+    "results": [
+      {
+        "dimension": "D3",
+        "winner": "a",
+        "weighted_pct": 70,
+        "status": "decided"
+      },
+      {
+        "dimension": "D4",
+        "winner": "a",
+        "weighted_pct": 70,
+        "status": "decided"
+      },
+      {
+        "dimension": "D7",
+        "winner": "a",
+        "weighted_pct": 50,
+        "status": "conflict"
+      },
+      {
+        "dimension": "D8",
+        "winner": "b",
+        "weighted_pct": 70,
+        "status": "decided"
+      }
+    ],
+    "clarifications": [
+      {
+        "question": "Ability Unlock on Level-Up",
+        "answer": "Stats only — fixed 3 actions (Attack/Defend/Use Item) (70% weighted)",
+        "weighted_pct": 70,
+        "provenance": "D3"
+      },
+      {
+        "question": "World Map Size",
+        "answer": "Small (~50x50 tiles, tight and focused) (70% weighted)",
+        "weighted_pct": 70,
+        "provenance": "D4"
+      },
+      {
+        "question": "HUD Density During Exploration",
+        "answer": "Light — small health bar in corner only (70% weighted)",
+        "weighted_pct": 70,
+        "provenance": "D8"
+      }
+    ],
+    "requirements": [
+      {
+        "id": "R100",
+        "text": "Level-ups MUST increase stats only (health, attack, defense); the combat system MUST provide exactly three fixed actions — Attack, Defend, and Use Item — with no additional abilities unlocked through leveling.",
+        "provenance": "probe: 70% weighted (D3)"
+      },
+      {
+        "id": "R101",
+        "text": "The game world MUST use a small map of approximately 50×50 tiles, tightly focused with minimal empty space.",
+        "provenance": "probe: 70% weighted (D4)"
+      },
+      {
+        "id": "R102",
+        "text": "During exploration, the HUD MUST display only a small health bar in one corner of the screen; all other player information (stats, inventory, quests) MUST be accessible only through menu screens.",
+        "provenance": "probe: 70% weighted (D8)"
+      }
+    ],
+    "deferred": [
+      "D7"
+    ]
+  },
   "tasks": {
     "T001": {
       "id": "T001",
@@ -908,7 +975,7 @@
       "worker_runs": 1
     }
   },
-  "sessions": 105,
+  "sessions": 108,
   "history": [
     {
       "from": "IDLE",
@@ -969,6 +1036,12 @@
       "to": "PROBE_LIVE",
       "at": "2026-06-16T02:24:57.393975Z",
       "note": "probe live at https://nvdtf.github.io/rpg-demo-1/, feedback issue #95"
+    },
+    {
+      "from": "PROBE_LIVE",
+      "to": "FEEDBACK",
+      "at": "2026-06-16T02:44:38.321288Z",
+      "note": "round 1: 3 delta requirements"
     }
   ]
 }
