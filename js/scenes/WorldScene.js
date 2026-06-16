@@ -324,6 +324,9 @@ export class WorldScene extends Phaser.Scene {
         // Fade in when returning from combat (FR-017).
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
+        // Ensure the player sprite shows the correct idle frame after waking.
+        this.player.setIdle();
+
         const result = this._pendingCombatResult;
         this._pendingCombatResult = null;
 
