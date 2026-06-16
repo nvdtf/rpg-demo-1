@@ -20,11 +20,22 @@ export default class SaveSystem {
     /**
      * Serialize the current game state and persist it to localStorage.
      *
+     * Combat state is never saved. If the browser closes mid-combat,
+     * the next load returns to the last save point in exploration mode.
+     *
      * @param {object} player           – runtime player object
      * @param {Array}  [defeatedEnemies=[]] – array of defeated enemy instance ids
+     * @param {object} [options={}]
+     * @param {boolean} [options.inCombat=false] – if true, save is rejected
      * @returns {{ success: boolean, reason: string }}
      */
-    static save(player, defeatedEnemies = []) {
+    static save(player, defeatedEnemies = [], { inCombat = false } = {}) {
+        // Reject saves during combat — mid-combat state must never be persisted.
+        // On next load the player will resume from their last exploration save.
+        if (inCombat) {
+            return { success: false, reason: 'in_combat' };
+        }
+
         const data = {
             version: CURRENT_VERSION,
             timestamp: new Date().toISOString(),

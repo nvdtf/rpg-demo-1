@@ -19,6 +19,7 @@ export class WorldScene extends Phaser.Scene {
     create(data) {
         const mode = data && data.mode ? data.mode : 'new_game';
         this.inCombat = false;
+        this._inputLocked = false;
         this._dialogActive = false;
         this._activeNPC = null;
         this._pauseMenuActive = false;
@@ -119,7 +120,7 @@ export class WorldScene extends Phaser.Scene {
     }
 
     update() {
-        if (this._dialogActive || this._pauseMenuActive) return;
+        if (this._dialogActive || this._pauseMenuActive || this._inputLocked) return;
         this.player.update();
     }
 
@@ -266,6 +267,7 @@ export class WorldScene extends Phaser.Scene {
     _onEnemyContact(enemy) {
         if (this.inCombat || enemy.defeated) return;
         this.inCombat = true;
+        this._inputLocked = true;
         this._combatEnemy = enemy;
 
         // Fade out before transitioning to combat (FR-017).
@@ -321,6 +323,9 @@ export class WorldScene extends Phaser.Scene {
      * Applies combat results: update HP, mark enemy defeated, remove sprite.
      */
     _onWake() {
+        // Lock input during fade-in to discard any queued inputs from combat.
+        this._inputLocked = true;
+
         // Fade in when returning from combat (FR-017).
         this.cameras.main.fadeIn(500, 0, 0, 0);
 
@@ -349,15 +354,22 @@ export class WorldScene extends Phaser.Scene {
                 // Process loot drops.
                 if (result.lootGained && result.lootGained.length > 0) {
                     const collected = [];
+                    const rejected = [];
                     for (const drop of result.lootGained) {
                         const res = InventorySystem.addItem(this.player, drop.id, drop.quantity);
                         if (res.success) {
                             const name = ITEMS[drop.id] ? ITEMS[drop.id].name : drop.id;
                             collected.push(drop.quantity > 1 ? `${name} x${drop.quantity}` : name);
+                        } else if (res.reason === 'inventory_full') {
+                            const name = ITEMS[drop.id] ? ITEMS[drop.id].name : drop.id;
+                            rejected.push(name);
                         }
                     }
                     if (collected.length > 0) {
                         this._showLootNotification(collected);
+                    }
+                    if (rejected.length > 0) {
+                        this._showInventoryFullNotification(rejected);
                     }
                 }
             }
@@ -368,8 +380,10 @@ export class WorldScene extends Phaser.Scene {
         this._combatEnemy = null;
 
         // Brief cooldown so the overlap doesn't re-trigger instantly.
+        // Also unlocks input — queued keypresses from combat are discarded.
         this.time.delayedCall(300, () => {
             this.inCombat = false;
+            this._inputLocked = false;
         });
     }
 
@@ -427,6 +441,33 @@ export class WorldScene extends Phaser.Scene {
 
             y -= 18;
         }
+    }
+
+    /**
+     * Display a floating notification when loot is rejected due to full inventory.
+     * @param {string[]} itemNames — display names of rejected items
+     */
+    _showInventoryFullNotification(itemNames) {
+        const x = this.player.sprite.x;
+        const y = this.player.sprite.y + 20;
+
+        const msg = `Inventory full! Cannot carry: ${itemNames.join(', ')}`;
+        const text = this.add.text(x, y, msg, {
+            fontSize: '12px',
+            fontFamily: 'monospace',
+            color: '#ff6644',
+            stroke: '#000000',
+            strokeThickness: 3,
+        }).setOrigin(0.5).setDepth(1000);
+
+        this.tweens.add({
+            targets: text,
+            y: y + 30,
+            alpha: 0,
+            duration: 3000,
+            ease: 'Power2',
+            onComplete: () => text.destroy(),
+        });
     }
 
     /* ── pause menu ───────────────────────────────────────────────── */
@@ -527,7 +568,7 @@ export class WorldScene extends Phaser.Scene {
 
     _onPauseSave() {
         const defeatedIds = this.enemies.filter(e => e.defeated).map(e => e.id);
-        const result = SaveSystem.save(this.player, defeatedIds);
+        const result = SaveSystem.save(this.player, defeatedIds, { inCombat: this.inCombat });
 
         // Show brief feedback inside the pause panel.
         if (this._pauseSaveText) this._pauseSaveText.destroy();
