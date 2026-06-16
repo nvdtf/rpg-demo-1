@@ -1,5 +1,5 @@
 {
-  "phase": "BUILDING",
+  "phase": "BUILT",
   "backend": "real",
   "repo_name": "rpg-demo-1",
   "repo_slug": "nvdtf/rpg-demo-1",
@@ -955,6 +955,12 @@
       "to": "BUILDING",
       "at": "2026-06-15T23:00:02.072934Z",
       "note": "dispatch started"
+    },
+    {
+      "from": "BUILDING",
+      "to": "BUILT",
+      "at": "2026-06-16T02:24:25.269274Z",
+      "note": "all tasks merged"
     }
   ]
 }
