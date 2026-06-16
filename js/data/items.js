@@ -19,6 +19,17 @@ const ITEMS = {
     quantity: 1
   },
 
+  short_sword: {
+    id: 'short_sword',
+    name: 'Short Sword',
+    type: 'weapon',
+    description: 'A compact blade favored by swift fighters.',
+    attackBonus: 5,
+    defenseBonus: 0,
+    healAmount: 0,
+    quantity: 1
+  },
+
   iron_sword: {
     id: 'iron_sword',
     name: 'Iron Sword',

@@ -62,7 +62,7 @@ const ENEMIES = {
     lootTable: [
       { itemId: 'health_potion', chance: 0.35 },
       { itemId: 'iron_sword', chance: 0.1 },
-      { itemId: 'leather_armor', chance: 0.1 }
+      { itemId: 'leather_tunic', chance: 0.1 }
     ],
     spriteKey: 'enemy_skeleton'
   }
