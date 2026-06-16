@@ -829,7 +829,7 @@
       "issue": 77,
       "pr": 78,
       "branch": "task/T040",
-      "status": "in_review",
+      "status": "merged",
       "review_cycles": 0,
       "worker_runs": 1
     }
