@@ -1,4 +1,5 @@
 import CombatSystem, { CombatState } from '../systems/CombatSystem.js';
+import InventorySystem from '../systems/InventorySystem.js';
 
 export class CombatScene extends Phaser.Scene {
     constructor() {
@@ -249,11 +250,14 @@ export class CombatScene extends Phaser.Scene {
         const result = this.combat.playerUseItem(item);
         if (!result) return;
 
+        // Delegate inventory management to InventorySystem (decrements
+        // quantity and removes the entry when it reaches zero).
+        InventorySystem.useConsumable(this.combatData.player, item.id);
+
         // Track consumption for the result payload.
         const tracked = this.consumablesUsed.find(c => c.id === item.id);
         if (tracked) tracked.quantityUsed++;
         else this.consumablesUsed.push({ id: item.id, quantityUsed: 1 });
-        item.quantity--;
 
         this.messageText.setText(`You use ${item.name}! Restored ${result.healed} HP.`);
         this._animateHeal(this.playerSprite, () => {
