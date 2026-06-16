@@ -107,7 +107,7 @@
 
 ### Implementation for User Story 4
 
-- [ ] T027 [P] [US4] Create `js/data/npcs.js` exporting NPC definitions per data-model.md: id, name, dialog lines, questId, spriteKey, x/y tile position — at least 3 NPCs (village elder, merchant, quest giver)
+- [x] T027 [P] [US4] Create `js/data/npcs.js` exporting NPC definitions per data-model.md: id, name, dialog lines, questId, spriteKey, x/y tile position — at least 3 NPCs (village elder, merchant, quest giver)
 - [ ] T028 [P] [US4] Create `js/data/quests.js` exporting quest definitions per data-model.md: id, title, description, objectiveType (defeat/find_item/talk_to_npc), targetId, targetCount, rewardXp, rewardGold, rewardItemId — at least 2 quests
 - [x] T029 [P] [US4] Create NPC placeholder sprites in `assets/sprites/` (elder.png, merchant.png, questgiver.png) as spritesheets with idle frames
 - [ ] T030 [US4] Create `js/entities/NPC.js` as a class wrapping a Phaser Arcade sprite: placed at tile coordinates from NPC data, interaction trigger zone, `interact()` method to start dialog sequence
