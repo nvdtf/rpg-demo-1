@@ -986,13 +986,14 @@
     "T050": {
       "id": "T050",
       "issue": 97,
+      "pr": 99,
       "branch": "task/T050",
       "status": "in_review",
       "review_cycles": 0,
       "worker_runs": 1
     }
   },
-  "sessions": 115,
+  "sessions": 116,
   "history": [
     {
       "from": "IDLE",
