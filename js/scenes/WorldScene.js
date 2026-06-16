@@ -7,6 +7,8 @@ import ENEMIES from '../data/enemies.js';
 import NPCS from '../data/npcs.js';
 import LevelSystem from '../systems/LevelSystem.js';
 import QuestSystem from '../systems/QuestSystem.js';
+import InventorySystem from '../systems/InventorySystem.js';
+import ITEMS from '../data/items.js';
 
 export class WorldScene extends Phaser.Scene {
     constructor() {
@@ -312,6 +314,21 @@ export class WorldScene extends Phaser.Scene {
                         this._showLevelUpNotification(levelUp.newLevel);
                     }
                 }
+
+                // Process loot drops.
+                if (result.lootGained && result.lootGained.length > 0) {
+                    const collected = [];
+                    for (const drop of result.lootGained) {
+                        const res = InventorySystem.addItem(this.player, drop.id, drop.quantity);
+                        if (res.success) {
+                            const name = ITEMS[drop.id] ? ITEMS[drop.id].name : drop.id;
+                            collected.push(drop.quantity > 1 ? `${name} x${drop.quantity}` : name);
+                        }
+                    }
+                    if (collected.length > 0) {
+                        this._showLootNotification(collected);
+                    }
+                }
             }
 
             this.player.emitStats();
@@ -349,5 +366,35 @@ export class WorldScene extends Phaser.Scene {
             ease: 'Power2',
             onComplete: () => text.destroy(),
         });
+    }
+
+    /**
+     * Display floating loot notification(s) above the player.
+     * @param {string[]} itemNames — display names of collected items
+     */
+    _showLootNotification(itemNames) {
+        const x = this.player.sprite.x;
+        let y = this.player.sprite.y - 40;
+
+        for (const name of itemNames) {
+            const text = this.add.text(x, y, `+ ${name}`, {
+                fontSize: '14px',
+                fontFamily: 'monospace',
+                color: '#44ffaa',
+                stroke: '#000000',
+                strokeThickness: 3,
+            }).setOrigin(0.5).setDepth(1000);
+
+            this.tweens.add({
+                targets: text,
+                y: y - 30,
+                alpha: 0,
+                duration: 2500,
+                ease: 'Power2',
+                onComplete: () => text.destroy(),
+            });
+
+            y -= 18;
+        }
     }
 }
