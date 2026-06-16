@@ -232,14 +232,20 @@ export class UIScene extends Phaser.Scene {
         this.charContainer.add(this.add.text(-left, y, `${player.hp} / ${player.maxHp}`, valueStyle).setOrigin(1, 0));
         y += 22;
 
-        // Attack
+        // Attack (base + equipment bonus)
+        const weaponBonus = (player.equipped && player.equipped.weapon && player.equipped.weapon.attackBonus) || 0;
+        const totalAttack = player.attack + weaponBonus;
+        const attackLabel = weaponBonus > 0 ? `${totalAttack}  (${player.attack}+${weaponBonus})` : `${player.attack}`;
         this.charContainer.add(this.add.text(left, y, 'Attack', labelStyle));
-        this.charContainer.add(this.add.text(-left, y, `${player.attack}`, valueStyle).setOrigin(1, 0));
+        this.charContainer.add(this.add.text(-left, y, attackLabel, valueStyle).setOrigin(1, 0));
         y += 22;
 
-        // Defense
+        // Defense (base + equipment bonus)
+        const armorBonus = (player.equipped && player.equipped.armor && player.equipped.armor.defenseBonus) || 0;
+        const totalDefense = player.defense + armorBonus;
+        const defenseLabel = armorBonus > 0 ? `${totalDefense}  (${player.defense}+${armorBonus})` : `${player.defense}`;
         this.charContainer.add(this.add.text(left, y, 'Defense', labelStyle));
-        this.charContainer.add(this.add.text(-left, y, `${player.defense}`, valueStyle).setOrigin(1, 0));
+        this.charContainer.add(this.add.text(-left, y, defenseLabel, valueStyle).setOrigin(1, 0));
         y += 28;
 
         addDivider(y);
@@ -279,19 +285,21 @@ export class UIScene extends Phaser.Scene {
         this.charContainer.add(this.add.text(left, y, 'Equipment', labelStyle));
         y += 20;
 
-        const weaponName = (player.equipment && player.equipment.weapon)
-            ? player.equipment.weapon.name
+        const weaponItem = player.equipped && player.equipped.weapon;
+        const weaponDisplay = weaponItem
+            ? `${weaponItem.name} (+${weaponItem.attackBonus} ATK)`
             : 'None';
-        const armorName = (player.equipment && player.equipment.armor)
-            ? player.equipment.armor.name
+        const armorItem = player.equipped && player.equipped.armor;
+        const armorDisplay = armorItem
+            ? `${armorItem.name} (+${armorItem.defenseBonus} DEF)`
             : 'None';
 
         this.charContainer.add(this.add.text(left + 8, y, 'Weapon', labelStyle));
-        this.charContainer.add(this.add.text(-left, y, weaponName, valueStyle).setOrigin(1, 0));
+        this.charContainer.add(this.add.text(-left, y, weaponDisplay, valueStyle).setOrigin(1, 0));
         y += 20;
 
         this.charContainer.add(this.add.text(left + 8, y, 'Armor', labelStyle));
-        this.charContainer.add(this.add.text(-left, y, armorName, valueStyle).setOrigin(1, 0));
+        this.charContainer.add(this.add.text(-left, y, armorDisplay, valueStyle).setOrigin(1, 0));
         y += 28;
 
         // Close hint
